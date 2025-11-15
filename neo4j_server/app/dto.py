@@ -69,7 +69,7 @@ class AddEpisodeRequest(BaseModel):
         default="gemini", description="Embedder client to use"
     )
     source: Literal["text", "json", "message"] = Field(
-        default="text", description="Type of episode source"
+        default="message", description="Type of episode source"
     )
     source_description: str = Field(
         default="", description="Description of the episode source"

@@ -38,7 +38,7 @@ async def add_episode(
     client: httpx.AsyncClient,
     name: str,
     episode_body: str,
-    source: str = "text",
+    source: str | None = None,
     source_description: str = "",
     llm_client: str = DEFAULT_LLM_CLIENT,
     embedder_client: str = DEFAULT_EMBEDDER_CLIENT,
@@ -62,8 +62,6 @@ async def add_episode(
     response = await client.post(f"{API_BASE}/episodes", json=payload)
     response.raise_for_status()
     return response.json()
-
-
 
 
 async def main():
