@@ -4,81 +4,47 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+from graphiti_core.search.search_utils import DEFAULT_MIN_SCORE
+
 
 class BasicSearchRequest(BaseModel):
-    query: str = Field(..., description="The search query")
-    llm_client: Literal["groq", "gemini", "ollama"] = Field(
-        default="groq", description="LLM client to use"
-    )
-    embedder_client: Literal["gemini", "ollama"] = Field(
-        default="gemini", description="Embedder client to use"
-    )
-    group_ids: list[str] | None = Field(
-        None, description="Optional list of group IDs to filter results"
-    )
-    num_results: int = Field(
-        default=10, description="Maximum number of results to return"
-    )
+    query: str
+    llm_client: Literal["groq", "gemini", "ollama"] = "groq"
+    embedder_client: Literal["gemini", "ollama"] = "gemini"
+    group_ids: list[str] | None = None
+    num_results: int = 10
 
 
 class CenterNodeSearchRequest(BaseModel):
-    query: str = Field(..., description="The search query")
-    center_node_uuid: str = Field(
-        ..., description="UUID of the center node for reranking"
-    )
-    llm_client: Literal["groq", "gemini", "ollama"] = Field(
-        default="groq", description="LLM client to use"
-    )
-    embedder_client: Literal["gemini", "ollama"] = Field(
-        default="gemini", description="Embedder client to use"
-    )
-    group_ids: list[str] | None = Field(
-        None, description="Optional list of group IDs to filter results"
-    )
-    num_results: int = Field(
-        default=10, description="Maximum number of results to return"
-    )
+    query: str
+    center_node_uuid: str
+    llm_client: Literal["groq", "gemini", "ollama"] = "groq"
+    embedder_client: Literal["gemini", "ollama"] = "gemini"
+    group_ids: list[str] | None = None
+    num_results: int = 10
 
 
 class AdvancedSearchRequest(BaseModel):
-    query: str = Field(..., description="The search query")
-    llm_client: Literal["groq", "gemini", "ollama"] = Field(
-        default="groq", description="LLM client to use"
-    )
-    embedder_client: Literal["gemini", "ollama"] = Field(
-        default="gemini", description="Embedder client to use"
-    )
-    group_ids: list[str] | None = Field(
-        None, description="Optional list of group IDs to filter results"
-    )
-    center_node_uuid: str | None = Field(
-        None, description="Optional UUID of the center node for reranking"
-    )
-    limit: int = Field(default=10, description="Maximum number of results to return")
+    query: str
+    llm_client: Literal["groq", "gemini", "ollama"] = "groq"
+    embedder_client: Literal["gemini", "ollama"] = "gemini"
+    group_ids: list[str] | None = None
+    center_node_uuid: str | None = None
+    return_limit: int | None = Field(default=None, ge=1)
+    reranker_min_score: float | None = Field(default=None)
 
 
 class AddEpisodeRequest(BaseModel):
-    name: str = Field(..., description="Name of the episode")
-    episode_body: str = Field(
-        ..., description="Content of the episode (text or JSON string)"
-    )
-    llm_client: Literal["groq", "gemini", "ollama"] = Field(
-        default="groq", description="LLM client to use"
-    )
-    embedder_client: Literal["gemini", "ollama"] = Field(
-        default="gemini", description="Embedder client to use"
-    )
-    source: Literal["text", "json", "message"] = Field(
-        default="message", description="Type of episode source"
-    )
-    source_description: str = Field(
-        default="", description="Description of the episode source"
-    )
-    group_id: str | None = Field(None, description="Optional group ID for the episode")
-    uuid: str | None = Field(None, description="Optional UUID for the episode")
+    name: str
+    episode_body: str
+    llm_client: Literal["groq", "gemini", "ollama"] = "groq"
+    embedder_client: Literal["gemini", "ollama"] = "gemini"
+    source: Literal["text", "json", "message"] = "message"
+    source_description: str = ""
+    group_id: str | None = None
+    uuid: str | None = None
     reference_time: datetime | None = Field(
-        default_factory=lambda: datetime.now(timezone.utc),
-        description="Reference time for the episode",
+        default_factory=lambda: datetime.now(timezone.utc)
     )
 
     @field_validator("episode_body", mode="before")
@@ -95,36 +61,33 @@ class FactResult(BaseModel):
     uuid: str
     name: str
     fact: str
-    valid_at: datetime | None
-    invalid_at: datetime | None
-    created_at: datetime
-    expired_at: datetime | None
-    source_node_uuid: str | None = None
-    target_node_uuid: str | None = None
+    # valid_at: datetime | None
+    # invalid_at: datetime | None
+    # created_at: datetime
+    # expired_at: datetime | None
+    # source_node_uuid: str | None = None
+    # target_node_uuid: str | None = None
+    episodes: list[str] = Field(default_factory=list)
 
     class Config:
         json_encoders = {datetime: lambda v: v.astimezone(timezone.utc).isoformat()}
 
 
 class BasicSearchResponse(BaseModel):
-    facts: list[FactResult] = Field(..., description="List of facts (edges) found")
+    facts: list[FactResult]
 
 
 class CenterNodeSearchResponse(BaseModel):
-    facts: list[FactResult] = Field(..., description="List of facts (edges) found")
+    facts: list[FactResult]
 
 
 class AdvancedSearchResponse(BaseModel):
-    edges: list[FactResult] = Field(
-        default_factory=list, description="List of edges found"
-    )
-    nodes: list[dict] = Field(default_factory=list, description="List of nodes found")
-    episodes: list[dict] = Field(
-        default_factory=list, description="List of episodes found"
-    )
-    communities: list[dict] = Field(
-        default_factory=list, description="List of communities found"
-    )
+    facts: list[FactResult] = Field(default_factory=list)
+    edges: list[FactResult] = Field(default_factory=list)
+    nodes: list[dict] = Field(default_factory=list)
+    episodes: list[dict] = Field(default_factory=list)
+    communities: list[dict] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
 
 
 class AddEpisodeResponse(BaseModel):
@@ -139,12 +102,13 @@ def fact_result_from_edge(edge):
         uuid=edge.uuid,
         name=edge.name,
         fact=edge.fact,
-        valid_at=edge.valid_at,
-        invalid_at=edge.invalid_at,
-        created_at=edge.created_at,
-        expired_at=edge.expired_at,
-        source_node_uuid=edge.source_node_uuid,
-        target_node_uuid=edge.target_node_uuid,
+        # valid_at=edge.valid_at,
+        # invalid_at=edge.invalid_at,
+        # created_at=edge.created_at,
+        # expired_at=edge.expired_at,
+        # source_node_uuid=edge.source_node_uuid,
+        # target_node_uuid=edge.target_node_uuid,
+        episodes=edge.episodes if hasattr(edge, "episodes") else [],
     )
 
 

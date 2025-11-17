@@ -48,6 +48,21 @@ async def add_episode(request: AddEpisodeRequest, settings: SettingsDep):
             reference_time=ref_time,
         )
 
+        # Log diagnostic information about what was created
+        logger.info(
+            f"Episode '{request.name}' added: "
+            f"nodes={len(result.nodes)}, "
+            f"edges={len(result.edges)}, "
+            f"episodic_edges={len(result.episodic_edges)}"
+        )
+
+        if len(result.edges) == 0 and len(result.nodes) > 0:
+            logger.warning(
+                f"No edges were created for episode '{request.name}' "
+                f"despite {len(result.nodes)} nodes being extracted. "
+                f"This may indicate an issue with edge extraction."
+            )
+
         return AddEpisodeResponse(
             message=f"Episode '{request.name}' added successfully",
             success=True,

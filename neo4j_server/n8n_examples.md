@@ -292,6 +292,399 @@ Error response:
 }
 ```
 
+## Advanced Search Examples
+
+The advanced search endpoint provides comprehensive graph exploration, returning nodes, edges (facts), episodes, and communities. It uses MMR (Maximal Marginal Relevance) reranking for better semantic relevance compared to basic search.
+
+### Endpoint
+
+**POST** `http://localhost:18888/api/v1/search/advanced`
+
+### Basic Advanced Search
+
+**Minimal query (uses default clients: `llm_client="groq"`, `embedder_client="gemini"`):**
+```json
+{
+  "query": "Who was the California Attorney General?"
+}
+```
+
+**With explicit return_limit (clients still use defaults):**
+```json
+{
+  "query": "What positions did people hold in California?",
+  "return_limit": 3
+}
+```
+
+**With reranker_min_score to filter by relevance (default is 0.6 when not provided, range 0.0-1.0):**
+```json
+{
+  "query": "What positions did people hold in California?",
+  "reranker_min_score": 0.7
+}
+```
+
+**With custom clients (only specify if you want to override defaults):**
+```json
+{
+  "query": "What positions did people hold in California?",
+  "llm_client": "gemini",
+  "embedder_client": "gemini",
+  "return_limit": 20
+}
+```
+
+**Combining return_limit and reranker_min_score:**
+```json
+{
+  "query": "What positions did people hold in California?",
+  "return_limit": 10,
+  "reranker_min_score": 0.75
+}
+```
+
+**Note:** 
+- `llm_client` and `embedder_client` are **optional**. If omitted, they default to `"groq"` and `"gemini"` respectively. The LLM client is not used during search operations (only when adding episodes), but the embedder client is required for converting queries to embeddings for similarity search.
+- `reranker_min_score` filters results after reranking based on relevance scores. Default is 0.6 (from graphiti_core) when not provided. Range is 0.0-1.0 - lower values return more results (including less relevant ones), higher values return only highly relevant results.
+
+### Advanced Search with Center Node
+
+Using a center node reranks results based on graph distance to a specific entity, providing more contextually relevant results:
+
+**Minimal example (uses default clients):**
+```json
+{
+  "query": "California Governor",
+  "center_node_uuid": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**With explicit return_limit:**
+```json
+{
+  "query": "California Governor",
+  "center_node_uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "return_limit": 10
+}
+```
+
+**With reranker_min_score for higher relevance filtering:**
+```json
+{
+  "query": "California Governor",
+  "center_node_uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "reranker_min_score": 0.8
+}
+```
+
+**Using n8n expressions to find center node first:**
+```json
+{
+  "query": "{{ $json.search_query }}",
+  "center_node_uuid": "{{ $json.center_node_uuid }}",
+  "llm_client": "groq",
+  "embedder_client": "gemini",
+  "return_limit": {{ $json.return_limit || 3 }}
+}
+```
+
+**Using n8n expressions with reranker_min_score:**
+```json
+{
+  "query": "{{ $json.search_query }}",
+  "center_node_uuid": "{{ $json.center_node_uuid }}",
+  "reranker_min_score": {{ $json.min_score || 0.6 }},
+  "return_limit": {{ $json.return_limit || 3 }}
+}
+```
+
+### Advanced Search with Group Filtering
+
+Filter results to specific groups (useful for multi-tenant or organization-specific data):
+
+**Minimal example (uses default clients):**
+```json
+{
+  "query": "Python programming best practices",
+  "group_ids": ["project-alpha-2024", "engineering-team-2024"]
+}
+```
+
+**With explicit return_limit:**
+```json
+{
+  "query": "Python programming best practices",
+  "group_ids": ["project-alpha-2024", "engineering-team-2024"],
+  "return_limit": 15
+}
+```
+
+**With reranker_min_score for relevance filtering:**
+```json
+{
+  "query": "Python programming best practices",
+  "group_ids": ["project-alpha-2024", "engineering-team-2024"],
+  "reranker_min_score": 0.65,
+  "return_limit": 15
+}
+```
+
+**Using n8n expressions for dynamic group filtering:**
+```json
+{
+  "query": "{{ $json.query }}",
+  "group_ids": {{ $json.group_ids ? JSON.stringify($json.group_ids) : null }},
+  "llm_client": "{{ $json.llm_client || 'groq' }}",
+  "embedder_client": "{{ $json.embedder_client || 'gemini' }}",
+  "return_limit": {{ $json.return_limit || 3 }}
+}
+```
+
+**Using n8n expressions with reranker_min_score:**
+```json
+{
+  "query": "{{ $json.query }}",
+  "group_ids": {{ $json.group_ids ? JSON.stringify($json.group_ids) : null }},
+  "reranker_min_score": {{ $json.min_score || 0.6 }},
+  "return_limit": {{ $json.return_limit || 3 }}
+}
+```
+
+### Complete Advanced Search Example
+
+Combining all features (using default clients):
+```json
+{
+  "query": "What are the key relationships in the California government?",
+  "center_node_uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "group_ids": ["california-politics-2024"],
+  "return_limit": 20
+}
+```
+
+**With reranker_min_score for high-relevance results:**
+```json
+{
+  "query": "What are the key relationships in the California government?",
+  "center_node_uuid": "550e8400-e29b-41d4-a716-446655440000",
+  "group_ids": ["california-politics-2024"],
+  "reranker_min_score": 0.75,
+  "return_limit": 20
+}
+```
+
+### Using Ollama Clients
+
+```json
+{
+  "query": "Technical architecture discussions",
+  "llm_client": "ollama",
+  "embedder_client": "ollama",
+  "return_limit": 10
+}
+```
+
+## n8n HTTP Request Node Configuration for Advanced Search
+
+### Basic Setup
+
+1. **Method**: `POST`
+2. **URL**: `http://localhost:18888/api/v1/search/advanced`
+3. **Authentication**: None (or add if your server requires it)
+4. **Body Content Type**: `JSON`
+
+### Dynamic Query Example (n8n Expression)
+
+**Using query from previous node (omitting clients to use defaults):**
+```json
+{
+  "query": "{{ $json.user_query || $json.search_term || $json.message }}",
+  "return_limit": {{ $json.max_results || 3 }}
+}
+```
+
+**With explicit clients (only if you need to override defaults):**
+```json
+{
+  "query": "{{ $json.user_query || $json.search_term || $json.message }}",
+  "llm_client": "groq",
+  "embedder_client": "gemini",
+  "return_limit": {{ $json.max_results || 3 }}
+}
+```
+
+**With reranker_min_score for relevance filtering:**
+```json
+{
+  "query": "{{ $json.user_query || $json.search_term || $json.message }}",
+  "reranker_min_score": {{ $json.min_score || 0.6 }},
+  "return_limit": {{ $json.max_results || 3 }}
+}
+```
+
+**With center node from previous search (using default clients):**
+```json
+{
+  "query": "{{ $json.query }}",
+  "center_node_uuid": "{{ $('Previous Search').item.json.nodes[0].uuid }}",
+  "return_limit": 10
+}
+```
+
+**With group IDs from workflow data (clients only specified if provided, otherwise defaults used):**
+```json
+{
+  "query": "{{ $json.query }}",
+  "group_ids": {{ $json.organization_groups ? JSON.stringify($json.organization_groups.split(',')) : null }},
+  "return_limit": {{ $json.return_limit || 3 }}
+}
+```
+
+**Or with optional client overrides:**
+```json
+{
+  "query": "{{ $json.query }}",
+  "group_ids": {{ $json.organization_groups ? JSON.stringify($json.organization_groups.split(',')) : null }},
+  "llm_client": "{{ $json.llm_client || 'groq' }}",
+  "embedder_client": "{{ $json.embedder_client || 'gemini' }}",
+  "return_limit": {{ $json.return_limit || 3 }}
+}
+```
+
+### Processing Advanced Search Results
+
+The advanced search response contains four types of results:
+
+**Response structure:**
+```json
+{
+  "edges": [
+    {
+      "uuid": "edge-uuid-1",
+      "name": "relationship_name",
+      "fact": "Source entity relationship to target entity",
+      "valid_at": "2024-01-15T10:30:00Z",
+      "invalid_at": null,
+      "created_at": "2024-01-15T10:30:00Z",
+      "expired_at": null,
+      "source_node_uuid": "source-uuid",
+      "target_node_uuid": "target-uuid"
+    }
+  ],
+  "nodes": [
+    {
+      "uuid": "node-uuid-1",
+      "name": "Entity Name",
+      "summary": "Summary of the entity",
+      "labels": ["Person", "Politician"],
+      "created_at": "2024-01-15T10:30:00Z",
+      "attributes": {}
+    }
+  ],
+  "episodes": [
+    {
+      "uuid": "episode-uuid-1",
+      "name": "Episode Name",
+      "content": "Episode content",
+      "created_at": "2024-01-15T10:30:00Z",
+      "group_id": "group-id",
+      "source": "message",
+      "source_description": "n8n conversation"
+    }
+  ],
+  "communities": [
+    {
+      "uuid": "community-uuid-1",
+      "name": "Community Name",
+      "summary": "Community summary",
+      "created_at": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+**n8n expression to extract top nodes:**
+```javascript
+{{ $json.nodes.slice(0, 5).map(n => n.name + ': ' + n.summary).join('\n') }}
+```
+
+**n8n expression to extract top facts:**
+```javascript
+{{ $json.edges.slice(0, 5).map(e => e.fact).join('\n') }}
+```
+
+**n8n expression to get center node UUID for next search:**
+```javascript
+{{ $json.nodes[0].uuid }}
+```
+
+### Two-Step Search Workflow Example
+
+**Step 1: Find a center node (using default clients)**
+```json
+{
+  "query": "{{ $json.initial_query }}",
+  "return_limit": 5
+}
+```
+
+**Step 2: Use center node for contextual search (using default clients)**
+```json
+{
+  "query": "{{ $json.refined_query }}",
+  "center_node_uuid": "{{ $('Step 1').item.json.nodes[0].uuid }}",
+  "return_limit": 10
+}
+```
+
+## Advanced Search Response Format
+
+Successful response:
+```json
+{
+  "edges": [...],
+  "nodes": [...],
+  "episodes": [...],
+  "communities": [...]
+}
+```
+
+Error response:
+```json
+{
+  "detail": "Error message describing what went wrong"
+}
+```
+
+## Advanced Search Field Reference
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `query` | string | Yes | - | The search query |
+| `llm_client` | string | No | `"groq"` | Options: `"groq"`, `"gemini"`, `"ollama"`. **Optional** - can be omitted to use default. Note: LLM client is not used during search operations (only when adding episodes). |
+| `embedder_client` | string | No | `"gemini"` | Options: `"gemini"`, `"ollama"`. **Optional** - can be omitted to use default. Used to convert query text into embeddings for similarity search. |
+| `group_ids` | array[string] | No | `null` | Optional list of group IDs to filter results |
+| `center_node_uuid` | string | No | `null` | Optional UUID of center node for graph distance reranking |
+| `return_limit` | integer | No | `null` | Optional limit for final results. If not specified, returns all results (default limit from graphiti_core is 10). Search always retrieves 2 * 10 = 20 candidates for reranking regardless of this parameter. |
+
+## Search Quality Notes
+
+**Advanced Search Configuration:**
+- Uses **MMR (Maximal Marginal Relevance)** reranking for better semantic relevance
+- Combines BM25 (fulltext) + cosine similarity (vector) search
+- Returns comprehensive results: nodes, edges, episodes, and communities
+- **Always retrieves 20 candidates** (2 * default limit of 10) for reranking, regardless of `return_limit`
+- `return_limit` only controls how many results are returned, not how many are retrieved
+
+**Best Practices:**
+- Use basic search (`/search/basic`) for simple fact retrieval
+- Use advanced search (`/search/advanced`) for comprehensive graph exploration
+- Use `center_node_uuid` when you have a specific entity context for better relevance
+- Use `return_limit=3` when you need to fit results within token limits (e.g., for LLM prompts)
+- MMR + center node = best quality (semantic relevance + graph context)
+- MMR is optimal for small result sets (< 20 candidates)
+
 ## Field Reference
 
 | Field | Type | Required | Default | Description |
