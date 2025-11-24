@@ -21,17 +21,20 @@ services:
       neo4j:
         condition: service_healthy
     environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-ollama}
       - GROQ_API_KEY=${GROQ_API_KEY}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - NEO4J_URI=bolt://neo4j:7687
-      - NEO4J_USER=${NEO4J_USER:-neo4j}
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
+      - NEO4J_USER=${NEO4J_USER}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+      - OLLAMA_EMBEDDING_BASE_URL=${OLLAMA_EMBEDDING_BASE_URL}
       - PORT=8000
       - MAX_REFLEXION_ITERATIONS=1 # for reflexion, disable if too slow
     # volumes:
     #   - ./neo4j_server:/app/neo4j_server
   neo4j:
-    image: neo4j
+    image: neo4j:latest
     restart: always
     healthcheck:
       test:
@@ -49,5 +52,5 @@ services:
     volumes:
       - "C:\\Users\\xyz\\Documents\\docker\\neo4j:/data"
     environment:
-      - NEO4J_AUTH=${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-password}
+      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
 

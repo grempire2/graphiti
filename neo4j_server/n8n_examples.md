@@ -292,6 +292,64 @@ Error response:
 }
 ```
 
+Validation error response (422):
+```json
+{
+  "message": "Validation error: Missing required field: body -> name; Invalid value for field 'body -> llm_client': ...",
+  "success": false,
+  "episode_uuid": null,
+  "errors": [...]
+}
+```
+
+## Troubleshooting Common Errors
+
+### "Your request is invalid or could not be processed by the service"
+
+This error from n8n's HTTP Request node typically indicates a validation error. Check the following:
+
+1. **Required Fields**: Ensure `name` and `episode_body` are provided:
+   ```json
+   {
+     "name": "Your Episode Name",
+     "episode_body": "user: Hello"
+   }
+   ```
+
+2. **Field Types**: Verify field types match expected values:
+   - `llm_client`: Must be one of `"groq"`, `"gemini"`, or `"ollama"` (default: `"ollama"`)
+   - `embedder_client`: Must be one of `"gemini"` or `"ollama"` (default: `"gemini"`)
+   - `source`: Must be one of `"text"`, `"json"`, or `"message"` (default: `"message"`)
+
+3. **Content-Type Header**: Ensure the HTTP Request node has:
+   - **Body Content Type**: `JSON`
+   - **Send Headers**: `Content-Type: application/json` (usually automatic)
+
+4. **Date Format**: If using `reference_time`, use ISO 8601 format:
+   ```json
+   {
+     "reference_time": "2024-01-15T14:30:00Z"
+   }
+   ```
+
+5. **Check Server Logs**: The server will log detailed error information. Look for validation error messages in the server console.
+
+6. **Test with Simple Request**: Start with a minimal request to verify connectivity:
+   ```json
+   {
+     "name": "Test Episode",
+     "episode_body": "user: test message"
+   }
+   ```
+
+### Common Validation Errors
+
+- **"Missing required field: body -> name"**: The `name` field is required
+- **"Missing required field: body -> episode_body"**: The `episode_body` field is required
+- **"Invalid value for field 'body -> llm_client'"**: `llm_client` must be `"groq"`, `"gemini"`, or `"ollama"`
+- **"Invalid value for field 'body -> embedder_client'"**: `embedder_client` must be `"gemini"` or `"ollama"`
+- **"Invalid value for field 'body -> reference_time'"**: Date format must be ISO 8601 (e.g., `"2024-01-15T14:30:00Z"`)
+
 ## Advanced Search Examples
 
 The advanced search endpoint provides comprehensive graph exploration, returning nodes, edges (facts), episodes, and communities. It uses MMR (Maximal Marginal Relevance) reranking for better semantic relevance compared to basic search.

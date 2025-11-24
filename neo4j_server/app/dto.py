@@ -9,7 +9,7 @@ from graphiti_core.search.search_utils import DEFAULT_MIN_SCORE
 
 class BasicSearchRequest(BaseModel):
     query: str
-    llm_client: Literal["groq", "gemini", "ollama"] = "groq"
+    llm_client: Literal["groq", "gemini", "ollama"] = "ollama"
     embedder_client: Literal["gemini", "ollama"] = "gemini"
     group_ids: list[str] | None = None
     num_results: int = 10
@@ -18,7 +18,7 @@ class BasicSearchRequest(BaseModel):
 class CenterNodeSearchRequest(BaseModel):
     query: str
     center_node_uuid: str
-    llm_client: Literal["groq", "gemini", "ollama"] = "groq"
+    llm_client: Literal["groq", "gemini", "ollama"] = "ollama"
     embedder_client: Literal["gemini", "ollama"] = "gemini"
     group_ids: list[str] | None = None
     num_results: int = 10
@@ -26,7 +26,7 @@ class CenterNodeSearchRequest(BaseModel):
 
 class AdvancedSearchRequest(BaseModel):
     query: str
-    llm_client: Literal["groq", "gemini", "ollama"] = "groq"
+    llm_client: Literal["groq", "gemini", "ollama"] = "ollama"
     embedder_client: Literal["gemini", "ollama"] = "gemini"
     group_ids: list[str] | None = None
     center_node_uuid: str | None = None
@@ -37,7 +37,7 @@ class AdvancedSearchRequest(BaseModel):
 class AddEpisodeRequest(BaseModel):
     name: str
     episode_body: str
-    llm_client: Literal["groq", "gemini", "ollama"] = "groq"
+    llm_client: Literal["groq", "gemini", "ollama"] = "ollama"
     embedder_client: Literal["gemini", "ollama"] = "gemini"
     source: Literal["text", "json", "message"] = "message"
     source_description: str = ""
@@ -94,6 +94,28 @@ class AddEpisodeResponse(BaseModel):
     message: str
     success: bool
     episode_uuid: str | None = None
+
+
+class DeleteEmbeddingsRequest(BaseModel):
+    created_before: datetime = Field(
+        description="Delete embeddings (nodes and edges) created before this date"
+    )
+    database: str | None = Field(
+        default="neo4j", description="Neo4j database name to delete from"
+    )
+    delete_nodes: bool = Field(
+        default=True, description="Whether to delete nodes with embeddings"
+    )
+    delete_edges: bool = Field(
+        default=True, description="Whether to delete edges with embeddings"
+    )
+
+
+class DeleteEmbeddingsResponse(BaseModel):
+    message: str
+    success: bool
+    nodes_deleted: int = 0
+    edges_deleted: int = 0
 
 
 def fact_result_from_edge(edge):

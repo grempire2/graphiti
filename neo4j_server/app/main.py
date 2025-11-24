@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from graphiti_core.driver.neo4j_driver import Neo4jDriver
 
 from app.config import get_settings
-from app.routers import episodes, search
+from app.routers import delete, episodes, search
 
 
 @asynccontextmanager
@@ -35,6 +35,7 @@ app = FastAPI(
 # Include routers
 app.include_router(search.router, prefix="/api/v1", tags=["search"])
 app.include_router(episodes.router, prefix="/api/v1", tags=["episodes"])
+app.include_router(delete.router, prefix="/api/v1", tags=["delete"])
 
 
 @app.get("/healthcheck")
@@ -54,5 +55,6 @@ async def root():
             "basic_search": "/api/v1/search/basic",
             "center_node_search": "/api/v1/search/center",
             "advanced_search": "/api/v1/search/advanced",
+            "delete_embeddings": "/api/v1/embeddings",
         },
     }

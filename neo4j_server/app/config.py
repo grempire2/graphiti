@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     neo4j_user: str = Field(default="neo4j")
     neo4j_password: str = Field(default="password")
     semaphore_limit: int = Field(default=15)  # graphiti default is 20
+    ollama_base_url: str = Field(
+        default="http://host.docker.internal:11434/v1",
+    )
+    ollama_embedding_base_url: str | None = Field(default=None)
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

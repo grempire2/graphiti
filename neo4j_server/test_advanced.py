@@ -53,7 +53,7 @@ SERVER_URL = os.environ.get("SERVER_URL", "http://localhost:18888")
 API_BASE = f"{SERVER_URL}/api/v1"
 
 # Default client configuration (can be overridden)
-DEFAULT_LLM_CLIENT = os.environ.get("LLM_CLIENT", "groq")
+DEFAULT_LLM_CLIENT = os.environ.get("LLM_CLIENT", "ollama")
 DEFAULT_EMBEDDER_CLIENT = os.environ.get("EMBEDDER_CLIENT", "gemini")
 
 
