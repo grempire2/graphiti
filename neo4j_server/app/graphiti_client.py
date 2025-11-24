@@ -5,7 +5,6 @@ from graphiti_core.cross_encoder.openai_reranker_client import OpenAIRerankerCli
 from graphiti_core.llm_client.config import LLMConfig
 
 from app.client_factory import (
-    OLLAMA_BASE_URL,
     OLLAMA_MODEL,
     create_embedder_client,
     create_llm_client,
@@ -15,7 +14,7 @@ from app.config import SettingsDep
 
 def create_graphiti_client(
     settings: SettingsDep,
-    llm_client_type: Literal["groq", "gemini", "ollama"] = "groq",
+    llm_client_type: Literal["groq", "gemini", "ollama"] = "ollama",
     embedder_client_type: Literal["gemini", "ollama"] = "gemini",
 ) -> Graphiti:
     """
@@ -23,7 +22,7 @@ def create_graphiti_client(
 
     Args:
         settings: Application settings containing API keys
-        llm_client_type: Type of LLM client to use (default: 'groq')
+        llm_client_type: Type of LLM client to use (default: 'ollama')
         embedder_client_type: Type of embedder client to use (default: 'gemini')
 
     Returns:
@@ -41,17 +40,26 @@ def create_graphiti_client(
         embedder_api_key = settings.gemini_api_key
 
     # Create LLM client
-    llm_client = create_llm_client(llm_client_type, llm_api_key)
+    llm_client = create_llm_client(
+        llm_client_type, llm_api_key, base_url=settings.ollama_base_url
+    )
 
     # Create embedder client
-    embedder = create_embedder_client(embedder_client_type, embedder_api_key)
+    embedder_base_url = (
+        settings.ollama_embedding_base_url or settings.ollama_base_url
+        if embedder_client_type == "ollama"
+        else None
+    )
+    embedder = create_embedder_client(
+        embedder_client_type, embedder_api_key, base_url=embedder_base_url
+    )
 
     # Initialize cross-encoder with Ollama configuration
     # Using Ollama's OpenAI-compatible API endpoint
     cross_encoder_config = LLMConfig(
         api_key=settings.openai_api_key,
         model=OLLAMA_MODEL,
-        base_url=OLLAMA_BASE_URL,
+        base_url=settings.ollama_base_url,
     )
     try:
         cross_encoder = OpenAIRerankerClient(config=cross_encoder_config)

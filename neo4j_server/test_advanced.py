@@ -1,9 +1,12 @@
 """
-Test script for advanced search functionality.
+Test script for search functionality (basic, center node, and advanced).
 
-This script tests the advanced search endpoint which returns nodes, edges,
-episodes, and communities from the graph. It assumes data already exists
-in the Neo4j database.
+This script tests all search endpoints:
+- Basic search: Returns facts (edges) using hybrid search
+- Center node search: Reranks results based on graph distance to a center node
+- Advanced search: Returns nodes, edges, episodes, and communities
+
+It assumes data already exists in the Neo4j database.
 
 NOTE: The advanced search endpoint uses COMBINED_HYBRID_SEARCH_MMR
 which uses MMR (Maximal Marginal Relevance) reranking for better semantic
@@ -50,8 +53,68 @@ SERVER_URL = os.environ.get("SERVER_URL", "http://localhost:18888")
 API_BASE = f"{SERVER_URL}/api/v1"
 
 # Default client configuration (can be overridden)
-DEFAULT_LLM_CLIENT = os.environ.get("LLM_CLIENT", "groq")
+DEFAULT_LLM_CLIENT = os.environ.get("LLM_CLIENT", "ollama")
 DEFAULT_EMBEDDER_CLIENT = os.environ.get("EMBEDDER_CLIENT", "gemini")
+
+
+async def basic_search(
+    client: httpx.AsyncClient,
+    query: str,
+    llm_client: str = DEFAULT_LLM_CLIENT,
+    embedder_client: str = DEFAULT_EMBEDDER_CLIENT,
+    group_ids: list[str] | None = None,
+    num_results: int = 10,
+) -> dict:
+    """
+    Perform a basic search.
+    
+    The simplest way to retrieve relationships (edges) from Graphiti.
+    Performs a hybrid search combining semantic similarity and BM25 text retrieval.
+    Returns facts (edges) that match the query.
+    """
+    payload = {
+        "query": query,
+        "llm_client": llm_client,
+        "embedder_client": embedder_client,
+        "num_results": num_results,
+    }
+    if group_ids:
+        payload["group_ids"] = group_ids
+
+    response = await client.post(f"{API_BASE}/search/basic", json=payload)
+    response.raise_for_status()
+    return response.json()
+
+
+async def center_node_search(
+    client: httpx.AsyncClient,
+    query: str,
+    center_node_uuid: str,
+    llm_client: str = DEFAULT_LLM_CLIENT,
+    embedder_client: str = DEFAULT_EMBEDDER_CLIENT,
+    group_ids: list[str] | None = None,
+    num_results: int = 10,
+) -> dict:
+    """
+    Perform a center node search.
+    
+    For more contextually relevant results, reranks search results based
+    on their graph distance to a specific node. This provides better
+    contextual relevance when you have a specific entity/context to focus on.
+    """
+    payload = {
+        "query": query,
+        "center_node_uuid": center_node_uuid,
+        "llm_client": llm_client,
+        "embedder_client": embedder_client,
+        "num_results": num_results,
+    }
+    if group_ids:
+        payload["group_ids"] = group_ids
+
+    response = await client.post(f"{API_BASE}/search/center", json=payload)
+    response.raise_for_status()
+    return response.json()
 
 
 async def advanced_search(
@@ -147,7 +210,7 @@ async def main():
     #################################################
 
     start_time = time.time()
-    print(f"[{time.time() - start_time:.2f}s] Starting advanced search test")
+    print(f"[{time.time() - start_time:.2f}s] Starting search test (basic, center node, advanced)")
     print(f"[{time.time() - start_time:.2f}s] Connecting to server at {SERVER_URL}")
     print(
         f"[{time.time() - start_time:.2f}s] Using LLM client: {DEFAULT_LLM_CLIENT}, Embedder client: {DEFAULT_EMBEDDER_CLIENT}"
@@ -173,13 +236,130 @@ async def main():
 
         try:
             #################################################
+            # BASIC SEARCH
+            #################################################
+            # The simplest way to retrieve relationships (edges)
+            # from Graphiti is using the search method, which
+            # performs a hybrid search combining semantic
+            # similarity and BM25 text retrieval.
+            #################################################
+
+            basic_search_start = time.time()
+            print("=" * 60)
+            print("BASIC SEARCH")
+            print("=" * 60)
+
+            # Perform a hybrid search combining semantic similarity and BM25 retrieval
+            query = "Who was the California Attorney General?"
+            print(f"\n[{time.time() - start_time:.2f}s] Searching for: '{query}'")
+            print(
+                f"[{time.time() - start_time:.2f}s] Using LLM: {DEFAULT_LLM_CLIENT}, Embedder: {DEFAULT_EMBEDDER_CLIENT}"
+            )
+
+            try:
+                search_results = await basic_search(
+                    client=client,
+                    query=query,
+                    llm_client=DEFAULT_LLM_CLIENT,
+                    embedder_client=DEFAULT_EMBEDDER_CLIENT,
+                    num_results=10,
+                )
+
+                basic_search_time = time.time() - basic_search_start
+                print(
+                    f"[{time.time() - start_time:.2f}s] ✓ Basic search completed (took {basic_search_time:.2f}s)"
+                )
+
+                # Print search results
+                facts = search_results.get("facts", [])
+                print(f"\nFound {len(facts)} results:")
+                for i, fact in enumerate(facts[:5], 1):
+                    print(f'\n{i}. UUID: {fact.get("uuid")}')
+                    print(f'   Fact: {fact.get("fact")}')
+                    if fact.get("valid_at"):
+                        print(f'   Valid from: {fact.get("valid_at")}')
+                    if fact.get("invalid_at"):
+                        print(f'   Valid until: {fact.get("invalid_at")}')
+                    if fact.get("source_node_uuid"):
+                        print(f'   Source Node UUID: {fact.get("source_node_uuid")}')
+
+            except Exception as e:
+                basic_search_time = time.time() - basic_search_start
+                print(
+                    f"[{time.time() - start_time:.2f}s] ✗ Basic search failed: {str(e)} (took {basic_search_time:.2f}s)"
+                )
+                facts = []
+
+            #################################################
+            # CENTER NODE SEARCH
+            #################################################
+            # For more contextually relevant results, you can
+            # use a center node to rerank search results based
+            # on their graph distance to a specific node
+            #################################################
+
+            if facts and len(facts) > 0:
+                center_search_start = time.time()
+                print("\n" + "=" * 60)
+                print("CENTER NODE SEARCH")
+                print("=" * 60)
+
+                # Get the source node UUID from the top result
+                center_node_uuid = facts[0].get("source_node_uuid")
+
+                if center_node_uuid:
+                    print(
+                        f"\n[{time.time() - start_time:.2f}s] Reranking search results based on graph distance:"
+                    )
+                    print(
+                        f"[{time.time() - start_time:.2f}s] Using center node UUID: {center_node_uuid}"
+                    )
+
+                    try:
+                        reranked_results = await center_node_search(
+                            client=client,
+                            query=query,
+                            center_node_uuid=center_node_uuid,
+                            llm_client=DEFAULT_LLM_CLIENT,
+                            embedder_client=DEFAULT_EMBEDDER_CLIENT,
+                            num_results=10,
+                        )
+
+                        center_search_time = time.time() - center_search_start
+                        print(
+                            f"[{time.time() - start_time:.2f}s] ✓ Center node search completed (took {center_search_time:.2f}s)"
+                        )
+
+                        # Print reranked search results
+                        reranked_facts = reranked_results.get("facts", [])
+                        print(f"\nFound {len(reranked_facts)} reranked results:")
+                        for i, fact in enumerate(reranked_facts[:5], 1):
+                            print(f'\n{i}. UUID: {fact.get("uuid")}')
+                            print(f'   Fact: {fact.get("fact")}')
+                            if fact.get("valid_at"):
+                                print(f'   Valid from: {fact.get("valid_at")}')
+                            if fact.get("invalid_at"):
+                                print(f'   Valid until: {fact.get("invalid_at")}')
+                    except Exception as e:
+                        center_search_time = time.time() - center_search_start
+                        print(
+                            f"[{time.time() - start_time:.2f}s] ✗ Center node search failed: {str(e)} (took {center_search_time:.2f}s)"
+                        )
+                else:
+                    print(
+                        "No source node UUID found in results for center node search."
+                    )
+            else:
+                print("\nNo results found in the initial search to use as center node.")
+
+            #################################################
             # ADVANCED SEARCH TESTS
             #################################################
             # Test various queries to explore the graph
             # Uses MMR reranking (COMBINED_HYBRID_SEARCH_MMR) for better semantic relevance
             #################################################
 
-            print("=" * 60)
+            print("\n" + "=" * 60)
             print("ADVANCED SEARCH TESTS")
             print("=" * 60)
             print(
@@ -233,7 +413,7 @@ async def main():
                     )
 
             #################################################
-            # TEST WITH CENTER NODE
+            # ADVANCED SEARCH WITH CENTER NODE
             #################################################
             # Test advanced search with center node reranking
             # Center node adds graph context by reranking results based on
@@ -328,12 +508,18 @@ async def main():
             print("\n" + "=" * 60)
             print("SEARCH QUALITY NOTES")
             print("=" * 60)
-            print("Current Configuration: MMR reranking (COMBINED_HYBRID_SEARCH_MMR)")
+            print("Search Types Tested:")
+            print("  1. Basic Search: Hybrid search (BM25 + semantic) returning facts/edges")
+            print("  2. Center Node Search: Reranks by graph distance to a center node")
+            print("  3. Advanced Search: Returns nodes, edges, episodes, communities")
+            print("\nAdvanced Search Configuration: MMR reranking (COMBINED_HYBRID_SEARCH_MMR)")
             print("  - Uses semantic similarity directly (better than RRF)")
             print("  - Reranks all candidates by query similarity")
             print("  - Provides better semantic relevance for answer quality")
             print("\nBest Practices:")
-            print("  - Always use center_node_uuid when you have a specific entity context")
+            print("  - Use basic search for simple fact retrieval")
+            print("  - Use center node search when you have a specific entity context")
+            print("  - Use advanced search for comprehensive graph exploration")
             print("  - MMR + center node = best quality (semantic relevance + graph context)")
             print("  - MMR is optimal for small result sets (< 20 candidates)")
             print("=" * 60)

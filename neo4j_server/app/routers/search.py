@@ -2,7 +2,9 @@ from fastapi import APIRouter, status
 
 from graphiti_core.search.search_config_recipes import (
     COMBINED_HYBRID_SEARCH_MMR,
+    EDGE_HYBRID_SEARCH_NODE_DISTANCE,
 )
+from graphiti_core.search.search_utils import DEFAULT_MIN_SCORE
 
 from app.config import SettingsDep
 from app.dto import (
@@ -48,7 +50,7 @@ async def basic_search(request: BasicSearchRequest, settings: SettingsDep):
 @router.post("/search/center", status_code=status.HTTP_200_OK)
 async def center_node_search(request: CenterNodeSearchRequest, settings: SettingsDep):
     """
-    Perform a center node search using graphiti.search() with center_node_uuid.
+    Perform a center node search using graphiti.search_() with center_node_uuid.
 
     This endpoint reranks search results based on their graph distance
     to a specific center node, providing more contextually relevant results.
@@ -57,13 +59,27 @@ async def center_node_search(request: CenterNodeSearchRequest, settings: Setting
         settings, request.llm_client, request.embedder_client
     )
     try:
-        edges = await graphiti.search(
+        # Use node distance config for center node search (same as graphiti.search() uses internally)
+        search_config = EDGE_HYBRID_SEARCH_NODE_DISTANCE.model_copy(deep=True)
+        search_config.limit = request.num_results
+
+        # sim_min_score uses default from graphiti_core (DEFAULT_MIN_SCORE)
+        # Since BM25 and cosine similarity run in parallel and results are reranked,
+        # we rely on reranker_min_score for final filtering
+
+        # Apply reranker_min_score to filter results after reranking
+        # This is the primary filter - reranking gives better relevance scores
+        # Default to DEFAULT_MIN_SCORE
+        warnings = []
+        search_config.reranker_min_score = DEFAULT_MIN_SCORE
+
+        results = await graphiti.search_(
             query=request.query,
-            center_node_uuid=request.center_node_uuid,
+            config=search_config,
             group_ids=request.group_ids,
-            num_results=request.num_results,
+            center_node_uuid=request.center_node_uuid,
         )
-        facts = [fact_result_from_edge(edge) for edge in edges]
+        facts = [fact_result_from_edge(edge) for edge in results.edges]
         return CenterNodeSearchResponse(facts=facts)
     finally:
         await graphiti.close()
@@ -85,7 +101,18 @@ async def advanced_search(request: AdvancedSearchRequest, settings: SettingsDep)
         # Use MMR reranker for better semantic relevance
         # MMR uses query similarity directly, providing better quality than RRF
         search_config = COMBINED_HYBRID_SEARCH_MMR.model_copy(deep=True)
-        search_config.limit = request.limit
+
+        # sim_min_score uses default from graphiti_core (DEFAULT_MIN_SCORE)
+        # Since BM25 and cosine similarity run in parallel and results are reranked,
+        # we rely on reranker_min_score for final filtering rather than early filtering
+
+        # Apply reranker_min_score to filter results after reranking
+        # This is the primary filter - reranking gives better relevance scores than early filtering
+        warnings = []
+        if request.reranker_min_score is not None:
+            search_config.reranker_min_score = request.reranker_min_score
+        else:
+            search_config.reranker_min_score = DEFAULT_MIN_SCORE
 
         results = await graphiti.search_(
             query=request.query,
@@ -94,13 +121,39 @@ async def advanced_search(request: AdvancedSearchRequest, settings: SettingsDep)
             center_node_uuid=request.center_node_uuid,
         )
 
+        # Apply return_limit if specified, otherwise use all results (limited by search_config.limit)
+        final_limit = request.return_limit
+
+        # Convert edges to facts
+        facts = [
+            fact_result_from_edge(edge)
+            for edge in (results.edges[:final_limit] if final_limit else results.edges)
+        ]
+
         return AdvancedSearchResponse(
-            edges=[fact_result_from_edge(edge) for edge in results.edges],
-            nodes=[node_to_dict(node) for node in results.nodes],
-            episodes=[episode_to_dict(episode) for episode in results.episodes],
-            communities=[
-                community_to_dict(community) for community in results.communities
+            facts=facts,
+            edges=facts,  # Keep edges for backward compatibility
+            nodes=[
+                node_to_dict(node)
+                for node in (
+                    results.nodes[:final_limit] if final_limit else results.nodes
+                )
             ],
+            episodes=[
+                episode_to_dict(episode)
+                for episode in (
+                    results.episodes[:final_limit] if final_limit else results.episodes
+                )
+            ],
+            communities=[
+                community_to_dict(community)
+                for community in (
+                    results.communities[:final_limit]
+                    if final_limit
+                    else results.communities
+                )
+            ],
+            warnings=warnings,
         )
     finally:
         await graphiti.close()

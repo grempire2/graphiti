@@ -21,13 +21,14 @@ GEMINI_EMBEDDING_MODEL = "gemini-embedding-001"
 
 OLLAMA_MODEL = "qwen3:30b-a3b-instruct-2507-q4_K_M"
 OLLAMA_SMALL_MODEL = "qwen3:30b-a3b-instruct-2507-q4_K_M"
-OLLAMA_EMBEDDING_MODEL = "nomic-embed-text"
+OLLAMA_EMBEDDING_MODEL = "embeddinggemma"
 OLLAMA_BASE_URL = "http://host.docker.internal:11434/v1"
 
 
 def create_llm_client(
     client_type: Literal["groq", "gemini", "ollama"],
     api_key: str | None = None,
+    base_url: str | None = None,
 ) -> GroqClient | GeminiClient | OpenAIGenericClient:
     """
     Create an LLM client with hardcoded model names.
@@ -64,7 +65,7 @@ def create_llm_client(
             api_key="ollama",  # Placeholder, not actually used
             model=OLLAMA_MODEL,
             small_model=OLLAMA_SMALL_MODEL,
-            base_url=OLLAMA_BASE_URL,
+            base_url=base_url,
         )
         return OpenAIGenericClient(config=config)
 
@@ -75,6 +76,7 @@ def create_llm_client(
 def create_embedder_client(
     client_type: Literal["gemini", "ollama"],
     api_key: str | None = None,
+    base_url: str | None = None,
 ) -> GeminiEmbedder | OpenAIEmbedder:
     """
     Create an embedder client with hardcoded model names.
@@ -96,13 +98,11 @@ def create_embedder_client(
         return GeminiEmbedder(config=config)
 
     elif client_type == "ollama":
-        # Use the same embedding dimension as Gemini embedder
-        gemini_config = GeminiEmbedderConfig()
         config = OpenAIEmbedderConfig(
             api_key="ollama",  # Placeholder, not actually used
             embedding_model=OLLAMA_EMBEDDING_MODEL,
-            base_url=OLLAMA_BASE_URL,
-            embedding_dim=gemini_config.embedding_dim,
+            base_url=base_url,
+            embedding_dim=768,
         )
         return OpenAIEmbedder(config=config)
 

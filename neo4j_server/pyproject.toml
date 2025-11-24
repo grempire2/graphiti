@@ -5,8 +5,7 @@ description = "Neo4j server for Graphiti with search and episode endpoints"
 authors = [
     { "name" = "Graphiti Team" },
 ]
-readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12,<3.14"
 dependencies = [
     "fastapi>=0.115.0",
     "graphiti-core[groq,google-genai]",
@@ -44,6 +43,6 @@ docstring-code-format = true
 
 [tool.pyright]
 include = ["."]
-pythonVersion = "3.10"
+pythonVersion = "3.12"
 typeCheckingMode = "basic"
 

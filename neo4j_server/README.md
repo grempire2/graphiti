@@ -8,6 +8,7 @@ A FastAPI server providing endpoints for Graphiti operations with Neo4j backend,
 - **Center Node Search**: Rerank search results based on graph distance to a center node
 - **Advanced Search**: Full graph search using `graphiti.search_()` returning nodes, edges, episodes, and communities
 - **Add Episode**: Add episodes (text or JSON) to the graph for processing
+- **Delete Embeddings**: Delete nodes and edges with embeddings by created date
 - **Multi-Client Support**: Choose from Groq, Gemini, or Ollama for LLM, and Gemini or Ollama for embeddings
 
 ## Endpoints
@@ -88,6 +89,38 @@ Adds an episode to the graph using `graphiti.add_episode()`.
 }
 ```
 
+### Delete Embeddings
+```
+DELETE /api/v1/embeddings
+```
+Deletes embeddings (nodes and edges) created before a specified date in a specified Neo4j database.
+
+**Request body:**
+```json
+{
+  "created_before": "2024-01-01T00:00:00Z",
+  "database": "neo4j",
+  "delete_nodes": true,
+  "delete_edges": true
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Successfully deleted embeddings created before 2024-01-01T00:00:00Z",
+  "success": true,
+  "nodes_deleted": 10,
+  "edges_deleted": 25
+}
+```
+
+**Parameters:**
+- `created_before` (required): ISO 8601 datetime string. Deletes all nodes and edges with embeddings created before this date.
+- `database` (optional): Neo4j database name. Defaults to `"neo4j"`.
+- `delete_nodes` (optional): Whether to delete Entity nodes with `name_embedding`. Defaults to `true`.
+- `delete_edges` (optional): Whether to delete RELATES_TO edges with `fact_embedding`. Defaults to `true`.
+
 ## Running with Docker Compose
 
 1. Create a `.env` file in the `neo4j_server` directory:
@@ -111,31 +144,42 @@ The server will be available at `http://localhost:18888` and Neo4j at `http://lo
 
 ## Environment Variables
 
-Only these two environment variables are read from `.env`:
+You can set these environment variables in your `.env` file or as shell environment variables:
+
+**Optional API Keys:**
 - `GROQ_API_KEY`: Groq API key (optional, required only if using Groq LLM client)
 - `GEMINI_API_KEY`: Gemini API key (optional, required only if using Gemini LLM or embedding client)
 
-All other settings are hardcoded:
-- Neo4j connection: `bolt://neo4j:7687`, user: `neo4j`, password: `password`
-- Ollama base URL: `http://host.docker.internal:11434/v1`
-- Model names are hardcoded (see `neo4j_server/clients.py` for details)
+**Neo4j Credentials (optional, defaults provided):**
+- `NEO4J_USER`: Neo4j username (defaults to `neo4j`)
+- `NEO4J_PASSWORD`: Neo4j password (defaults to `password`)
+
+**Ollama URLs (optional, defaults provided):**
+- `OLLAMA_BASE_URL`: Base URL for Ollama LLM client (defaults to `http://host.docker.internal:11434/v1`)
+- `OLLAMA_EMBEDDING_BASE_URL`: Base URL for Ollama embedding client (defaults to `OLLAMA_BASE_URL` if not set)
+
+**Note:** When Neo4j starts for the first time, you may see a message like "Changed password for user 'neo4j'". This is normal - Neo4j is setting the initial password based on the `NEO4J_AUTH` environment variable, not changing an existing password.
+
+**Other hardcoded settings:**
+- Neo4j connection: `bolt://neo4j:7687` (default user: `neo4j`, default password: `password`)
+- Model names are hardcoded (see `neo4j_server/app/client_factory.py` for details)
 
 ## Hardcoded Models
 
+### Ollama (Default)
+- LLM Model: `qwen3:30b-a3b-instruct-2507-q4_K_M`
+- Small Model: `qwen3:30b-a3b-instruct-2507-q4_K_M`
+- Embedding Model: `embeddinggemma:latest`
+- Embedding Dimension: `768`
+
 ### Groq
-- LLM Model: `llama-3.1-70b-versatile`
-- Small Model: `llama-3.1-70b-versatile`
+- LLM Model: `openai/gpt-oss-120b`
+- Small Model: `openai/gpt-oss-20b`
 
 ### Gemini
-- LLM Model: `gemini-2.5-flash`
-- Small Model: `gemini-2.5-flash-lite-preview-06-17`
-- Embedding Model: `text-embedding-001`
-
-### Ollama
-- LLM Model: `deepseek-r1:7b`
-- Small Model: `deepseek-r1:7b`
-- Embedding Model: `nomic-embed-text`
-- Embedding Dimension: `768`
+- LLM Model: `gemini-flash-latest`
+- Small Model: `gemini-flash-lite-latest`
+- Embedding Model: `gemini-embedding-001`
 
 ## API Documentation
 
