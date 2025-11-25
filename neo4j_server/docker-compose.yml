@@ -14,7 +14,7 @@ services:
           "-c",
           "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthcheck')",
         ]
-      interval: 300s
+      interval: 60s  # Default is 10s
       timeout: 5s
       retries: 3
     depends_on:
@@ -42,7 +42,7 @@ services:
           "CMD-SHELL",
           "wget -qO- http://localhost:7474 || exit 1",
         ]
-      interval: 1s
+      interval: 60s  # Default is 1s
       timeout: 10s
       retries: 10
       start_period: 3s

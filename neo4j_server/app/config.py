@@ -1,9 +1,13 @@
 from functools import lru_cache
-from typing import Annotated
+from typing import Annotated, Literal, get_args
 
 from fastapi import Depends
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+LLMClientType = Literal["ollama", "groq", "gemini"]
+EmbedderClientType = Literal["ollama", "gemini"]
 
 
 class Settings(BaseSettings):
@@ -18,6 +22,10 @@ class Settings(BaseSettings):
         default="http://host.docker.internal:11434/v1",
     )
     ollama_embedding_base_url: str | None = Field(default=None)
+    llm_client: str = Field(
+        default=get_args(LLMClientType)[0]
+    )  # default to first option
+    embedder_client: str = Field(default=get_args(EmbedderClientType)[0])
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

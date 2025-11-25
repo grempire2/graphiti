@@ -5,12 +5,13 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field, field_validator
 
 from graphiti_core.search.search_utils import DEFAULT_MIN_SCORE
+from app.config import EmbedderClientType, LLMClientType
 
 
 class BasicSearchRequest(BaseModel):
     query: str
-    llm_client: Literal["groq", "gemini", "ollama"] = "ollama"
-    embedder_client: Literal["gemini", "ollama"] = "gemini"
+    llm_client: LLMClientType | None = None  # default to settings.llm_client
+    embedder_client: EmbedderClientType | None = None
     group_ids: list[str] | None = None
     num_results: int = 10
 
@@ -18,16 +19,16 @@ class BasicSearchRequest(BaseModel):
 class CenterNodeSearchRequest(BaseModel):
     query: str
     center_node_uuid: str
-    llm_client: Literal["groq", "gemini", "ollama"] = "ollama"
-    embedder_client: Literal["gemini", "ollama"] = "gemini"
+    llm_client: LLMClientType | None = None
+    embedder_client: EmbedderClientType | None = None
     group_ids: list[str] | None = None
     num_results: int = 10
 
 
 class AdvancedSearchRequest(BaseModel):
     query: str
-    llm_client: Literal["groq", "gemini", "ollama"] = "ollama"
-    embedder_client: Literal["gemini", "ollama"] = "gemini"
+    llm_client: LLMClientType | None = None
+    embedder_client: EmbedderClientType | None = None
     group_ids: list[str] | None = None
     center_node_uuid: str | None = None
     return_limit: int | None = Field(default=None, ge=1)
@@ -37,8 +38,8 @@ class AdvancedSearchRequest(BaseModel):
 class AddEpisodeRequest(BaseModel):
     name: str
     episode_body: str
-    llm_client: Literal["groq", "gemini", "ollama"] = "ollama"
-    embedder_client: Literal["gemini", "ollama"] = "gemini"
+    llm_client: LLMClientType | None = None
+    embedder_client: EmbedderClientType | None = None
     source: Literal["text", "json", "message"] = "message"
     source_description: str = ""
     group_id: str | None = None

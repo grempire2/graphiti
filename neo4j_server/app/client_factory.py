@@ -2,8 +2,6 @@
 Client factory for creating LLM and embedder clients with hardcoded model names.
 """
 
-from typing import Literal
-
 from graphiti_core.embedder.gemini import GeminiEmbedder, GeminiEmbedderConfig
 from graphiti_core.embedder.openai import OpenAIEmbedder, OpenAIEmbedderConfig
 from graphiti_core.llm_client.config import LLMConfig
@@ -22,11 +20,14 @@ GEMINI_EMBEDDING_MODEL = "gemini-embedding-001"
 OLLAMA_MODEL = "qwen3:30b-a3b-instruct-2507-q4_K_M"
 OLLAMA_SMALL_MODEL = "qwen3:30b-a3b-instruct-2507-q4_K_M"
 OLLAMA_EMBEDDING_MODEL = "embeddinggemma"
+OLLAMA_SEARCH_EMBEDDING_MODEL = (
+    "hf.co/unsloth/embeddinggemma-300m-GGUF"  # Different model for search
+)
 OLLAMA_BASE_URL = "http://host.docker.internal:11434/v1"
 
 
 def create_llm_client(
-    client_type: Literal["groq", "gemini", "ollama"],
+    client_type: str,
     api_key: str | None = None,
     base_url: str | None = None,
 ) -> GroqClient | GeminiClient | OpenAIGenericClient:
@@ -74,9 +75,10 @@ def create_llm_client(
 
 
 def create_embedder_client(
-    client_type: Literal["gemini", "ollama"],
+    client_type: str,
     api_key: str | None = None,
     base_url: str | None = None,
+    embedding_model: str | None = None,
 ) -> GeminiEmbedder | OpenAIEmbedder:
     """
     Create an embedder client with hardcoded model names.
@@ -84,6 +86,8 @@ def create_embedder_client(
     Args:
         client_type: Type of client to create ('gemini' or 'ollama')
         api_key: API key for the client (required for gemini, ignored for ollama)
+        base_url: Base URL for the client (optional)
+        embedding_model: Override the default embedding model (optional)
 
     Returns:
         An embedder client instance configured with hardcoded model names

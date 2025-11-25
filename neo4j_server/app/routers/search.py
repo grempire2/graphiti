@@ -33,7 +33,9 @@ async def basic_search(request: BasicSearchRequest, settings: SettingsDep):
     and BM25 text retrieval, returning edges (facts) from the graph.
     """
     graphiti = create_graphiti_client(
-        settings, request.llm_client, request.embedder_client
+        settings,
+        request.llm_client or settings.llm_client,
+        request.embedder_client or settings.embedder_client,
     )
     try:
         edges = await graphiti.search(
@@ -56,7 +58,9 @@ async def center_node_search(request: CenterNodeSearchRequest, settings: Setting
     to a specific center node, providing more contextually relevant results.
     """
     graphiti = create_graphiti_client(
-        settings, request.llm_client, request.embedder_client
+        settings,
+        request.llm_client or settings.llm_client,
+        request.embedder_client or settings.embedder_client,
     )
     try:
         # Use node distance config for center node search (same as graphiti.search() uses internally)
@@ -95,7 +99,9 @@ async def advanced_search(request: AdvancedSearchRequest, settings: SettingsDep)
     more advanced features such as filters and different search methodologies.
     """
     graphiti = create_graphiti_client(
-        settings, request.llm_client, request.embedder_client
+        settings,
+        request.llm_client or settings.llm_client,
+        request.embedder_client or settings.embedder_client,
     )
     try:
         # Use MMR reranker for better semantic relevance

@@ -1,5 +1,3 @@
-from typing import Literal
-
 from graphiti_core import Graphiti
 from graphiti_core.cross_encoder.openai_reranker_client import OpenAIRerankerClient
 from graphiti_core.llm_client.config import LLMConfig
@@ -14,20 +12,23 @@ from app.config import SettingsDep
 
 def create_graphiti_client(
     settings: SettingsDep,
-    llm_client_type: Literal["groq", "gemini", "ollama"] = "ollama",
-    embedder_client_type: Literal["gemini", "ollama"] = "gemini",
+    llm_client_type: str | None = None,
+    embedder_client_type: str | None = None,
 ) -> Graphiti:
     """
     Create a Graphiti client instance with the specified LLM and embedder clients.
 
     Args:
-        settings: Application settings containing API keys
-        llm_client_type: Type of LLM client to use (default: 'ollama')
-        embedder_client_type: Type of embedder client to use (default: 'gemini')
+        settings: Application settings containing API keys and defaults
+        llm_client_type: Type of LLM client to use (defaults to settings.llm_client)
+        embedder_client_type: Type of embedder client to use (defaults to settings.embedder_client)
 
     Returns:
         A configured Graphiti client instance
     """
+    llm_client_type = llm_client_type or settings.llm_client
+    embedder_client_type = embedder_client_type or settings.embedder_client
+
     # Get API keys from settings based on client types
     llm_api_key = None
     if llm_client_type == "groq":
