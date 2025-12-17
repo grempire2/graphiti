@@ -823,6 +823,90 @@ class Graphiti:
                 span.record_exception(e)
                 raise e
 
+
+
+    async def save_episode_results(
+        self,
+        episode: EpisodicNode,
+        nodes: list[EntityNode],
+        edges: list[EntityEdge],
+        episodic_edges: list[EpisodicEdge],
+        embedder: EmbedderClient | None = None,
+        clear_embeddings: bool = False,
+    ) -> AddEpisodeResults:
+        """
+        Save pre-extracted episode results to the database with specified embedder.
+
+        This method allows saving already-extracted nodes and edges to a database,
+        optionally with a different embedder than the one configured for this client.
+        Useful for dual-embedding scenarios where the same extraction should be saved
+        to multiple databases with different embeddings.
+
+        Parameters
+        ----------
+        episode : EpisodicNode
+            The episode node to save
+        nodes : list[EntityNode]
+            List of entity nodes to save
+        edges : list[EntityEdge]
+            List of entity edges to save
+        episodic_edges : list[EpisodicEdge]
+            List of episodic edges to save
+        embedder : EmbedderClient | None
+            Optional embedder to use. If None, uses self.embedder.
+        clear_embeddings : bool
+            If True, clears embeddings on the copied nodes/edges before saving,
+            forcing regeneration with the specified embedder. Default False.
+
+        Returns
+        -------
+        AddEpisodeResults
+            Results containing the saved episode, nodes, edges, etc.
+
+        Notes
+        -----
+        This is a lower-level method intended for advanced use cases like dual-embedding.
+        For normal episode addition, use add_episode() instead.
+        """
+        import copy
+        from graphiti_core.utils.bulk_utils import add_nodes_and_edges_bulk
+
+        # Use provided embedder or fall back to instance embedder
+        target_embedder = embedder or self.embedder
+
+        # Deep copy to avoid mutating the original objects
+        episode_copy = copy.deepcopy(episode)
+        nodes_copy = copy.deepcopy(nodes)
+        edges_copy = copy.deepcopy(edges)
+        episodic_edges_copy = copy.deepcopy(episodic_edges)
+
+        # Clear embeddings if requested (for regeneration with different embedder)
+        if clear_embeddings:
+            for node in nodes_copy:
+                node.name_embedding = None
+            for edge in edges_copy:
+                edge.fact_embedding = None
+
+        # Save to database
+        await add_nodes_and_edges_bulk(
+            self.driver,
+            [episode_copy],
+            episodic_edges_copy,
+            nodes_copy,
+            edges_copy,
+            target_embedder,
+        )
+
+        return AddEpisodeResults(
+            episode=episode_copy,
+            episodic_edges=episodic_edges_copy,
+            nodes=nodes_copy,
+            edges=edges_copy,
+            communities=[],
+            community_edges=[],
+        )
+    
+
     async def add_episode_bulk(
         self,
         bulk_episodes: list[RawEpisode],

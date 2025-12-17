@@ -46,6 +46,10 @@ class Episode(BaseModel):
 class AddEpisodesRequest(BaseModel):
     group_id: str = Field(..., description="The group id for the episodes")
     episodes: list[Episode] = Field(..., description="The episodes to add")
+    embedding_mode: str = Field(
+        default="default",
+        description='Embedding mode: "fast" (fast only), "dual" (both), or "default" (quality only)',
+    )
 
 
 class SearchQuery(BaseModel):
@@ -105,6 +109,10 @@ class NodeSearchRequest(BaseModel):
         None,
         description="Optional list of entity type names to filter by (e.g., Preference, Location)",
     )
+    embedding_mode: str = Field(
+        default="default",
+        description='Embedding mode: "fast" (fast DB), "dual" (both DBs), or "default" (quality DB)',
+    )
 
 
 class NodeResult(BaseModel):
@@ -130,6 +138,10 @@ class FactSearchRequest(BaseModel):
     center_node_uuid: str | None = Field(
         None,
         description="Optional UUID of a node to center the search around for reranking",
+    )
+    embedding_mode: str = Field(
+        default="default",
+        description='Embedding mode: "fast" (fast DB), "dual" (both DBs), or "default" (quality DB)',
     )
 
 
