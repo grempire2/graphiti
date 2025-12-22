@@ -42,12 +42,12 @@ async def main():
 
         response = await client.post(f"{API_BASE_URL}/episodes", json=episode_data)
         if response.status_code == 202:
-            print("✓ Episode queued for processing")
+            print("[OK] Episode queued for processing")
             # Wait for processing to complete
             print("  Waiting 30 seconds for episode processing...")
             await asyncio.sleep(30)
         else:
-            print(f"✗ Failed to add episode: {response.status_code}")
+            print(f"[FAIL] Failed to add episode: {response.status_code}")
             print(f"  Response: {response.text}")
             return
 
@@ -77,7 +77,7 @@ async def main():
             for i, fact in enumerate(quality_results.get("facts", [])[:3], 1):
                 print(f"{i}. {fact.get('fact', 'N/A')}")
         else:
-            print(f"✗ Search failed: {response.status_code}")
+            print(f"[FAIL] Search failed: {response.status_code}")
             quality_results = {"facts": []}
 
         # Step 4: Search in Fast database
@@ -101,7 +101,7 @@ async def main():
             for i, fact in enumerate(fast_results.get("facts", [])[:3], 1):
                 print(f"{i}. {fact.get('fact', 'N/A')}")
         else:
-            print(f"✗ Search failed: {response.status_code}")
+            print(f"[FAIL] Search failed: {response.status_code}")
             fast_results = {"facts": []}
 
         # Step 5: Comparison Summary

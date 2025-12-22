@@ -168,14 +168,18 @@ async def delete_episode(uuid: str, graphiti: GraphitiDep):
 async def clear(
     graphiti: GraphitiDep,
 ):
-    # Clear default database
+    """
+    Clear all data from both quality and fast databases.
+    """
+    # Clear default (quality) database
     await clear_data(graphiti.driver)
     await graphiti.build_indices_and_constraints()
 
-    # Clear fast database if it exists and is different
+    # Clear fast database if it exists and is initialized
     if hasattr(graphiti, "fast_client") and graphiti.fast_client:
-        if graphiti.fast_client.driver.uri != graphiti.driver.uri:
-            await clear_data(graphiti.fast_client.driver)
-            await graphiti.fast_client.build_indices_and_constraints()
+        # We clear the fast database. Even if it happens to be the same database,
+        # clear_data is idempotent and safe to run twice.
+        await clear_data(graphiti.fast_client.driver)
+        await graphiti.fast_client.build_indices_and_constraints()
 
-    return Result(message="Graph cleared", success=True)
+    return Result(message="Graph data cleared from both databases", success=True)
