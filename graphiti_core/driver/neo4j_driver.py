@@ -31,19 +31,19 @@ logger = logging.getLogger(__name__)
 
 class Neo4jDriver(GraphDriver):
     provider = GraphProvider.NEO4J
-    default_group_id: str = ''
+    default_group_id: str = ""
 
     def __init__(
         self,
         uri: str,
         user: str | None,
         password: str | None,
-        database: str = 'neo4j',
+        database: str = "neo4j",
     ):
         super().__init__()
         self.client = AsyncGraphDatabase.driver(
             uri=uri,
-            auth=(user or '', password or ''),
+            auth=(user or "", password or ""),
         )
         self._database = database
 
@@ -61,18 +61,22 @@ class Neo4jDriver(GraphDriver):
 
         self.aoss_client = None
 
-    async def execute_query(self, cypher_query_: LiteralString, **kwargs: Any) -> EagerResult:
+    async def execute_query(
+        self, cypher_query_: LiteralString, **kwargs: Any
+    ) -> EagerResult:
         # Check if database_ is provided in kwargs.
         # If not populated, set the value to retain backwards compatibility
-        params = kwargs.pop('params', None)
+        params = kwargs.pop("params", None)
         if params is None:
             params = {}
-        params.setdefault('database_', self._database)
+        params.setdefault("database_", self._database)
 
         try:
-            result = await self.client.execute_query(cypher_query_, parameters_=params, **kwargs)
+            result = await self.client.execute_query(
+                cypher_query_, parameters_=params, **kwargs
+            )
         except Exception as e:
-            logger.error(f'Error executing Neo4j query: {e}\n{cypher_query_}\n{params}')
+            logger.error(f"Error executing Neo4j query: {e}\n{cypher_query_}\n{params}")
             raise
 
         return result
@@ -86,7 +90,7 @@ class Neo4jDriver(GraphDriver):
 
     def delete_all_indexes(self) -> Coroutine:
         return self.client.execute_query(
-            'CALL db.indexes() YIELD name DROP INDEX name',
+            "CALL db.indexes() YIELD name DROP INDEX name",
         )
 
     async def _execute_index_query(self, query: LiteralString) -> EagerResult | None:
@@ -99,8 +103,10 @@ class Neo4jDriver(GraphDriver):
             return await self.execute_query(query)
         except ClientError as e:
             # Ignore "equivalent index already exists" error (race condition with IF NOT EXISTS)
-            if 'EquivalentSchemaRuleAlreadyExists' in str(e):
-                logger.debug(f'Index already exists (concurrent creation): {query[:50]}...')
+            if "EquivalentSchemaRuleAlreadyExists" in str(e):
+                logger.debug(
+                    f"Index already exists (concurrent creation): {query[:50]}..."
+                )
                 return None
             raise
 
@@ -114,7 +120,9 @@ class Neo4jDriver(GraphDriver):
 
         index_queries: list[LiteralString] = range_indices + fulltext_indices
 
-        await semaphore_gather(*[self._execute_index_query(query) for query in index_queries])
+        await semaphore_gather(
+            *[self._execute_index_query(query) for query in index_queries]
+        )
 
     async def health_check(self) -> None:
         """Check Neo4j connectivity by running the driver's verify_connectivity method."""
@@ -122,5 +130,5 @@ class Neo4jDriver(GraphDriver):
             await self.client.verify_connectivity()
             return None
         except Exception as e:
-            print(f'Neo4j health check failed: {e}')
+            print(f"Neo4j health check failed: {e}")
             raise

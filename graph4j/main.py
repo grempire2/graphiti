@@ -23,21 +23,29 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from config import get_settings
-from graphiti_client import initialize_graphiti
+from routers.ingest import async_worker
+from graphiti_client import initialize_graphiti, close_graphiti
 from routers import ingest_router, search_router
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    """Initialize Graphiti on startup."""
+    """Initialize Graphiti and background worker on startup, close on shutdown."""
     settings = get_settings()
     await initialize_graphiti(settings)
+
+    # Start the background ingestion worker
+    await async_worker.start()
+
     yield
-    # Shutdown - Graphiti connections are handled per-request
+
+    # Stop the worker first to finish pending jobs
+    await async_worker.stop()
+    await close_graphiti()
 
 
 app = FastAPI(
-    title='Graph4j - Advanced Graphiti Server',
+    title="Graph4j - Advanced Graphiti Server",
     description="""
     Advanced Graphiti FastAPI server with hybrid search and reranking capabilities.
     
@@ -64,34 +72,36 @@ app = FastAPI(
     - `DELETE /group/{group_id}` - Delete groups
     - `POST /clear` - Clear graph data
     """,
-    version='1.0.0',
+    version="1.0.0",
     lifespan=lifespan,
 )
 
 
 # Include routers
-app.include_router(search_router, tags=['Search'])
-app.include_router(ingest_router, tags=['Ingest'])
+app.include_router(search_router, tags=["Search"])
+app.include_router(ingest_router, tags=["Ingest"])
 
 
-@app.get('/healthcheck')
+@app.get("/health")
 async def healthcheck():
     """Health check endpoint."""
-    return JSONResponse(content={'status': 'healthy', 'service': 'graph4j'}, status_code=200)
+    return JSONResponse(
+        content={"status": "healthy", "service": "graph4j"}, status_code=200
+    )
 
 
-@app.get('/')
+@app.get("/")
 async def root():
     """Root endpoint with service information."""
     return {
-        'service': 'Graph4j - Advanced Graphiti Server',
-        'version': '1.0.0',
-        'features': [
-            'Hybrid Search (BM25 + Cosine Similarity)',
-            'RRF Reranking',
-            'Node Search with Entity Type Filtering',
-            'Fact Search with Center Node Reranking',
+        "service": "Graph4j - Advanced Graphiti Server",
+        "version": "1.0.0",
+        "features": [
+            "Hybrid Search (BM25 + Cosine Similarity)",
+            "RRF Reranking",
+            "Node Search with Entity Type Filtering",
+            "Fact Search with Center Node Reranking",
         ],
-        'docs': '/docs',
-        'redoc': '/redoc',
+        "docs": "/docs",
+        "redoc": "/redoc",
     }

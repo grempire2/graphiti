@@ -138,7 +138,7 @@ class Graphiti:
         graph_driver: GraphDriver | None = None,
         max_coroutines: int | None = None,
         tracer: Tracer | None = None,
-        trace_span_prefix: str = 'graphiti',
+        trace_span_prefix: str = "graphiti",
     ):
         """
         Initialize a Graphiti instance.
@@ -199,7 +199,7 @@ class Graphiti:
             self.driver = graph_driver
         else:
             if uri is None:
-                raise ValueError('uri must be provided when graph_driver is None')
+                raise ValueError("uri must be provided when graph_driver is None")
             self.driver = Neo4jDriver(uri, user, password)
 
         self.store_raw_episode_content = store_raw_episode_content
@@ -244,13 +244,13 @@ class Graphiti:
             database_provider = self._get_provider_type(self.driver)
 
             properties = {
-                'llm_provider': llm_provider,
-                'embedder_provider': embedder_provider,
-                'reranker_provider': reranker_provider,
-                'database_provider': database_provider,
+                "llm_provider": llm_provider,
+                "embedder_provider": embedder_provider,
+                "reranker_provider": reranker_provider,
+                "database_provider": database_provider,
             }
 
-            capture_event('graphiti_initialized', properties)
+            capture_event("graphiti_initialized", properties)
         except Exception:
             # Silently handle telemetry errors
             pass
@@ -258,33 +258,33 @@ class Graphiti:
     def _get_provider_type(self, client) -> str:
         """Get provider type from client class name."""
         if client is None:
-            return 'none'
+            return "none"
 
         class_name = client.__class__.__name__.lower()
 
         # LLM providers
-        if 'openai' in class_name:
-            return 'openai'
-        elif 'azure' in class_name:
-            return 'azure'
-        elif 'anthropic' in class_name:
-            return 'anthropic'
-        elif 'crossencoder' in class_name:
-            return 'crossencoder'
-        elif 'gemini' in class_name:
-            return 'gemini'
-        elif 'groq' in class_name:
-            return 'groq'
+        if "openai" in class_name:
+            return "openai"
+        elif "azure" in class_name:
+            return "azure"
+        elif "anthropic" in class_name:
+            return "anthropic"
+        elif "crossencoder" in class_name:
+            return "crossencoder"
+        elif "gemini" in class_name:
+            return "gemini"
+        elif "groq" in class_name:
+            return "groq"
         # Database providers
-        elif 'neo4j' in class_name:
-            return 'neo4j'
-        elif 'falkor' in class_name:
-            return 'falkordb'
+        elif "neo4j" in class_name:
+            return "neo4j"
+        elif "falkor" in class_name:
+            return "falkordb"
         # Embedder providers
-        elif 'voyage' in class_name:
-            return 'voyage'
+        elif "voyage" in class_name:
+            return "voyage"
         else:
-            return 'unknown'
+            return "unknown"
 
     async def close(self):
         """
@@ -361,7 +361,11 @@ class Graphiti:
     ) -> tuple[list[EntityNode], dict[str, str], list[tuple[EntityNode, EntityNode]]]:
         """Extract nodes from episode and resolve against existing graph."""
         extracted_nodes = await extract_nodes(
-            self.clients, episode, previous_episodes, entity_types, excluded_entity_types
+            self.clients,
+            episode,
+            previous_episodes,
+            entity_types,
+            excluded_entity_types,
         )
 
         nodes, uuid_map, duplicates = await resolve_extracted_nodes(
@@ -421,7 +425,7 @@ class Graphiti:
         episode.entity_edges = [edge.uuid for edge in entity_edges]
 
         if not self.store_raw_episode_content:
-            episode.content = ''
+            episode.content = ""
 
         await add_nodes_and_edges_bulk(
             self.driver,
@@ -484,7 +488,9 @@ class Graphiti:
         nodes_uuid_set: set[str] = set()
         for episode, _ in episode_context:
             nodes_by_episode_unique[episode.uuid] = []
-            nodes = [nodes_by_uuid[node.uuid] for node in nodes_by_episode[episode.uuid]]
+            nodes = [
+                nodes_by_uuid[node.uuid] for node in nodes_by_episode[episode.uuid]
+            ]
             for node in nodes:
                 if node.uuid not in nodes_uuid_set:
                     nodes_by_episode_unique[episode.uuid].append(node)
@@ -537,7 +543,9 @@ class Graphiti:
             ]
         )
 
-        final_hydrated_nodes = [node for nodes in hydrated_nodes_results for node in nodes]
+        final_hydrated_nodes = [
+            node for nodes in hydrated_nodes_results for node in nodes
+        ]
 
         # Resolve edges with updated pointers
         edges_by_episode_unique: dict[str, list[EntityEdge]] = {}
@@ -610,7 +618,9 @@ class Graphiti:
         if driver is None:
             driver = self.clients.driver
 
-        return await retrieve_episodes(driver, reference_time, last_n, group_ids, source)
+        return await retrieve_episodes(
+            driver, reference_time, last_n, group_ids, source
+        )
 
     async def add_episode(
         self,
@@ -700,7 +710,7 @@ class Graphiti:
                 self.driver = self.driver.clone(database=group_id)
                 self.clients.driver = self.driver
 
-        with self.tracer.start_span('add_episode') as span:
+        with self.tracer.start_span("add_episode") as span:
             try:
                 # Retrieve previous episodes for context
                 previous_episodes = (
@@ -711,7 +721,9 @@ class Graphiti:
                         source=source,
                     )
                     if previous_episode_uuids is None
-                    else await EpisodicNode.get_by_uuids(self.driver, previous_episode_uuids)
+                    else await EpisodicNode.get_by_uuids(
+                        self.driver, previous_episode_uuids
+                    )
                 )
 
                 # Get or create episode
@@ -732,14 +744,18 @@ class Graphiti:
 
                 # Create default edge type map
                 edge_type_map_default = (
-                    {('Entity', 'Entity'): list(edge_types.keys())}
+                    {("Entity", "Entity"): list(edge_types.keys())}
                     if edge_types is not None
-                    else {('Entity', 'Entity'): []}
+                    else {("Entity", "Entity"): []}
                 )
 
                 # Extract and resolve nodes
                 extracted_nodes = await extract_nodes(
-                    self.clients, episode, previous_episodes, entity_types, excluded_entity_types
+                    self.clients,
+                    episode,
+                    previous_episodes,
+                    entity_types,
+                    excluded_entity_types,
                 )
 
                 nodes, uuid_map, _ = await resolve_extracted_nodes(
@@ -751,15 +767,17 @@ class Graphiti:
                 )
 
                 # Extract and resolve edges in parallel with attribute extraction
-                resolved_edges, invalidated_edges = await self._extract_and_resolve_edges(
-                    episode,
-                    extracted_nodes,
-                    previous_episodes,
-                    edge_type_map or edge_type_map_default,
-                    group_id,
-                    edge_types,
-                    nodes,
-                    uuid_map,
+                resolved_edges, invalidated_edges = (
+                    await self._extract_and_resolve_edges(
+                        episode,
+                        extracted_nodes,
+                        previous_episodes,
+                        edge_type_map or edge_type_map_default,
+                        group_id,
+                        edge_types,
+                        nodes,
+                        uuid_map,
+                    )
                 )
 
                 # Extract node attributes
@@ -780,7 +798,9 @@ class Graphiti:
                 if update_communities:
                     communities, community_edges = await semaphore_gather(
                         *[
-                            update_community(self.driver, self.llm_client, self.embedder, node)
+                            update_community(
+                                self.driver, self.llm_client, self.embedder, node
+                            )
                             for node in nodes
                         ],
                         max_coroutines=self.max_coroutines,
@@ -791,23 +811,25 @@ class Graphiti:
                 # Add span attributes
                 span.add_attributes(
                     {
-                        'episode.uuid': episode.uuid,
-                        'episode.source': source.value,
-                        'episode.reference_time': reference_time.isoformat(),
-                        'group_id': group_id,
-                        'node.count': len(hydrated_nodes),
-                        'edge.count': len(entity_edges),
-                        'edge.invalidated_count': len(invalidated_edges),
-                        'previous_episodes.count': len(previous_episodes),
-                        'entity_types.count': len(entity_types) if entity_types else 0,
-                        'edge_types.count': len(edge_types) if edge_types else 0,
-                        'update_communities': update_communities,
-                        'communities.count': len(communities) if update_communities else 0,
-                        'duration_ms': (end - start) * 1000,
+                        "episode.uuid": episode.uuid,
+                        "episode.source": source.value,
+                        "episode.reference_time": reference_time.isoformat(),
+                        "group_id": group_id,
+                        "node.count": len(hydrated_nodes),
+                        "edge.count": len(entity_edges),
+                        "edge.invalidated_count": len(invalidated_edges),
+                        "previous_episodes.count": len(previous_episodes),
+                        "entity_types.count": len(entity_types) if entity_types else 0,
+                        "edge_types.count": len(edge_types) if edge_types else 0,
+                        "update_communities": update_communities,
+                        "communities.count": (
+                            len(communities) if update_communities else 0
+                        ),
+                        "duration_ms": (end - start) * 1000,
                     }
                 )
 
-                logger.info(f'Completed add_episode in {(end - start) * 1000} ms')
+                logger.info(f"Completed add_episode in {(end - start) * 1000} ms")
 
                 return AddEpisodeResults(
                     episode=episode,
@@ -819,11 +841,9 @@ class Graphiti:
                 )
 
             except Exception as e:
-                span.set_status('error', str(e))
+                span.set_status("error", str(e))
                 span.record_exception(e)
                 raise e
-
-
 
     async def save_episode_results(
         self,
@@ -905,7 +925,6 @@ class Graphiti:
             communities=[],
             community_edges=[],
         )
-    
 
     async def add_episode_bulk(
         self,
@@ -952,8 +971,8 @@ class Graphiti:
         If these operations are required, use the `add_episode` method instead for each
         individual episode.
         """
-        with self.tracer.start_span('add_episode_bulk') as bulk_span:
-            bulk_span.add_attributes({'episode.count': len(bulk_episodes)})
+        with self.tracer.start_span("add_episode_bulk") as bulk_span:
+            bulk_span.add_attributes({"episode.count": len(bulk_episodes)})
 
             try:
                 start = time()
@@ -971,23 +990,25 @@ class Graphiti:
 
                 # Create default edge type map
                 edge_type_map_default = (
-                    {('Entity', 'Entity'): list(edge_types.keys())}
+                    {("Entity", "Entity"): list(edge_types.keys())}
                     if edge_types is not None
-                    else {('Entity', 'Entity'): []}
+                    else {("Entity", "Entity"): []}
                 )
 
                 episodes = [
-                    await EpisodicNode.get_by_uuid(self.driver, episode.uuid)
-                    if episode.uuid is not None
-                    else EpisodicNode(
-                        name=episode.name,
-                        labels=[],
-                        source=episode.source,
-                        content=episode.content,
-                        source_description=episode.source_description,
-                        group_id=group_id,
-                        created_at=now,
-                        valid_at=episode.reference_time,
+                    (
+                        await EpisodicNode.get_by_uuid(self.driver, episode.uuid)
+                        if episode.uuid is not None
+                        else EpisodicNode(
+                            name=episode.name,
+                            labels=[],
+                            source=episode.source,
+                            content=episode.content,
+                            source_description=episode.source_description,
+                            group_id=group_id,
+                            created_at=now,
+                            valid_at=episode.reference_time,
+                        )
                     )
                     for episode in bulk_episodes
                 ]
@@ -1003,7 +1024,9 @@ class Graphiti:
                 )
 
                 # Get previous episode context for each episode
-                episode_context = await retrieve_previous_episodes_bulk(self.driver, episodes)
+                episode_context = await retrieve_previous_episodes_bulk(
+                    self.driver, episodes
+                )
 
                 # Extract and dedupe nodes and edges
                 (
@@ -1021,11 +1044,14 @@ class Graphiti:
                 # Create Episodic Edges
                 episodic_edges: list[EpisodicEdge] = []
                 for episode_uuid, nodes in nodes_by_episode.items():
-                    episodic_edges.extend(build_episodic_edges(nodes, episode_uuid, now))
+                    episodic_edges.extend(
+                        build_episodic_edges(nodes, episode_uuid, now)
+                    )
 
                 # Re-map edge pointers and dedupe edges
                 extracted_edges_bulk_updated: list[list[EntityEdge]] = [
-                    resolve_edge_pointers(edges, uuid_map) for edges in extracted_edges_bulk
+                    resolve_edge_pointers(edges, uuid_map)
+                    for edges in extracted_edges_bulk
                 ]
 
                 edges_by_episode = await dedupe_edges_bulk(
@@ -1054,7 +1080,9 @@ class Graphiti:
                 )
 
                 # Resolved pointers for episodic edges
-                resolved_episodic_edges = resolve_edge_pointers(episodic_edges, final_uuid_map)
+                resolved_episodic_edges = resolve_edge_pointers(
+                    episodic_edges, final_uuid_map
+                )
 
                 # save data to KG
                 await add_nodes_and_edges_bulk(
@@ -1071,14 +1099,14 @@ class Graphiti:
                 # Add span attributes
                 bulk_span.add_attributes(
                     {
-                        'group_id': group_id,
-                        'node.count': len(final_hydrated_nodes),
-                        'edge.count': len(resolved_edges + invalidated_edges),
-                        'duration_ms': (end - start) * 1000,
+                        "group_id": group_id,
+                        "node.count": len(final_hydrated_nodes),
+                        "edge.count": len(resolved_edges + invalidated_edges),
+                        "duration_ms": (end - start) * 1000,
                     }
                 )
 
-                logger.info(f'Completed add_episode_bulk in {(end - start) * 1000} ms')
+                logger.info(f"Completed add_episode_bulk in {(end - start) * 1000} ms")
 
                 return AddBulkEpisodeResults(
                     episodes=episodes,
@@ -1090,7 +1118,7 @@ class Graphiti:
                 )
 
             except Exception as e:
-                bulk_span.set_status('error', str(e))
+                bulk_span.set_status("error", str(e))
                 bulk_span.record_exception(e)
                 raise e
 
@@ -1175,7 +1203,9 @@ class Graphiti:
         point for temporal relevance.
         """
         search_config = (
-            EDGE_HYBRID_SEARCH_RRF if center_node_uuid is None else EDGE_HYBRID_SEARCH_NODE_DISTANCE
+            EDGE_HYBRID_SEARCH_RRF
+            if center_node_uuid is None
+            else EDGE_HYBRID_SEARCH_NODE_DISTANCE
         )
         search_config.limit = num_results
 
@@ -1204,7 +1234,12 @@ class Graphiti:
     ) -> SearchResults:
         """DEPRECATED"""
         return await self.search_(
-            query, config, group_ids, center_node_uuid, bfs_origin_node_uuids, search_filter
+            query,
+            config,
+            group_ids,
+            center_node_uuid,
+            bfs_origin_node_uuids,
+            search_filter,
         )
 
     @handle_multiple_group_ids
@@ -1236,11 +1271,16 @@ class Graphiti:
             driver=driver,
         )
 
-    async def get_nodes_and_edges_by_episode(self, episode_uuids: list[str]) -> SearchResults:
+    async def get_nodes_and_edges_by_episode(
+        self, episode_uuids: list[str]
+    ) -> SearchResults:
         episodes = await EpisodicNode.get_by_uuids(self.driver, episode_uuids)
 
         edges_list = await semaphore_gather(
-            *[EntityEdge.get_by_uuids(self.driver, episode.entity_edges) for episode in episodes],
+            *[
+                EntityEdge.get_by_uuids(self.driver, episode.entity_edges)
+                for episode in episodes
+            ],
             max_coroutines=self.max_coroutines,
         )
 
@@ -1277,7 +1317,9 @@ class Graphiti:
                 updated_edge.fact,
                 group_ids=[updated_edge.group_id],
                 config=EDGE_HYBRID_SEARCH_RRF,
-                search_filter=SearchFilters(edge_uuids=[edge.uuid for edge in valid_edges]),
+                search_filter=SearchFilters(
+                    edge_uuids=[edge.uuid for edge in valid_edges]
+                ),
             )
         ).edges
         existing_edges = (
@@ -1296,10 +1338,10 @@ class Graphiti:
             related_edges,
             existing_edges,
             EpisodicNode(
-                name='',
+                name="",
                 source=EpisodeType.text,
-                source_description='',
-                content='',
+                source_description="",
+                content="",
                 valid_at=edge.valid_at or utc_now(),
                 entity_edges=[],
                 group_id=edge.group_id,
@@ -1334,11 +1376,15 @@ class Graphiti:
         # We should delete all nodes that are only mentioned in the deleted episode
         nodes_to_delete: list[EntityNode] = []
         for node in nodes:
-            query: LiteralString = 'MATCH (e:Episodic)-[:MENTIONS]->(n:Entity {uuid: $uuid}) RETURN count(*) AS episode_count'
-            records, _, _ = await self.driver.execute_query(query, uuid=node.uuid, routing_='r')
+            query: LiteralString = (
+                "MATCH (e:Episodic)-[:MENTIONS]->(n:Entity {uuid: $uuid}) RETURN count(*) AS episode_count"
+            )
+            records, _, _ = await self.driver.execute_query(
+                query, uuid=node.uuid, routing_="r"
+            )
 
             for record in records:
-                if record['episode_count'] == 1:
+                if record["episode_count"] == 1:
                     nodes_to_delete.append(node)
 
         await Edge.delete_by_uuids(self.driver, [edge.uuid for edge in edges_to_delete])

@@ -1,8 +1,7 @@
 import asyncio
-from contextlib import asynccontextmanager
 from functools import partial
 
-from fastapi import APIRouter, FastAPI, status
+from fastapi import APIRouter, status
 from graphiti_core.nodes import EpisodeType
 from graphiti_core.utils.maintenance.graph_data_operations import clear_data
 
@@ -13,6 +12,7 @@ from graphiti_client import (
     delete_entity_edge as delete_entity_edge_helper,
     delete_group as delete_group_helper,
     delete_episodic_node as delete_episodic_node_helper,
+    get_clients,
 )
 
 
@@ -26,7 +26,13 @@ class AsyncWorker:
             try:
                 print(f"Got a job: (size of remaining queue: {self.queue.qsize()})")
                 job = await self.queue.get()
-                await job()
+                try:
+                    await job()
+                except Exception as e:
+                    print(f"[WORKER ERROR] Job failed with exception: {e}")
+                    import traceback
+
+                    traceback.print_exc()
             except asyncio.CancelledError:
                 break
 
@@ -44,14 +50,7 @@ class AsyncWorker:
 async_worker = AsyncWorker()
 
 
-@asynccontextmanager
-async def lifespan(_: FastAPI):
-    await async_worker.start()
-    yield
-    await async_worker.stop()
-
-
-router = APIRouter(lifespan=lifespan)
+router = APIRouter()
 
 
 @router.post("/episodes", status_code=status.HTTP_202_ACCEPTED)
@@ -69,12 +68,17 @@ async def add_episodes(
     - 'json': Structured JSON data
 
     Embedding modes (specified per-request in embedding_mode field):
+    - 'dual': Uses fast embeddings first (speed priority), then adds quality embeddings in second pass (DEFAULT)
     - 'fast': Uses only fast embeddings for quick processing
-    - 'dual': Uses fast embeddings first (speed priority), then adds quality embeddings in second pass
-    - 'default': Uses only default/quality embeddings
+    - 'quality': Uses only quality/default embeddings
     """
 
     async def add_episode_task(ep: Episode):
+        # Get initialized clients from graphiti_client
+        default_graphiti, fast_graphiti = get_clients()
+
+        print(f"[WORKER] Starting episode task: {ep.name}")
+
         # Determine the episode type
         episode_type_map = {
             "text": EpisodeType.text,
@@ -95,12 +99,12 @@ async def add_episodes(
 
         # Handle different embedding modes with dual database architecture
         if request.embedding_mode == "dual":
-            # Dual mode: Save to both fast and quality databases
+            # Dual mode: Save to both fast and quality databases (DEFAULT)
             from dual_embedding_graphiti import add_episode_dual
 
             await add_episode_dual(
-                fast_client=graphiti.fast_client,
-                quality_client=graphiti.quality_client,
+                fast_graphiti=fast_graphiti,
+                default_graphiti=default_graphiti,
                 uuid=ep.uuid,
                 group_id=request.group_id,
                 name=ep.name,
@@ -112,7 +116,7 @@ async def add_episodes(
 
         elif request.embedding_mode == "fast":
             # Fast mode: Save only to fast database
-            await graphiti.fast_client.add_episode(
+            await fast_graphiti.add_episode(
                 uuid=ep.uuid,
                 group_id=request.group_id,
                 name=ep.name,
@@ -122,9 +126,9 @@ async def add_episodes(
                 source_description=ep.source_description,
             )
 
-        else:  # default mode
-            # Default mode: Save only to quality database
-            await graphiti.quality_client.add_episode(
+        else:  # Quality mode (selected via 'quality' or fallback)
+            # Quality mode: Save only to default database
+            await default_graphiti.add_episode(
                 uuid=ep.uuid,
                 group_id=request.group_id,
                 name=ep.name,
@@ -133,6 +137,8 @@ async def add_episodes(
                 source=ep_type,
                 source_description=ep.source_description,
             )
+
+        print(f"[WORKER] Completed episode task: {ep.name}")
 
     for ep in request.episodes:
         await async_worker.queue.put(partial(add_episode_task, ep))
@@ -162,6 +168,14 @@ async def delete_episode(uuid: str, graphiti: GraphitiDep):
 async def clear(
     graphiti: GraphitiDep,
 ):
+    # Clear default database
     await clear_data(graphiti.driver)
     await graphiti.build_indices_and_constraints()
+
+    # Clear fast database if it exists and is different
+    if hasattr(graphiti, "fast_client") and graphiti.fast_client:
+        if graphiti.fast_client.driver.uri != graphiti.driver.uri:
+            await clear_data(graphiti.fast_client.driver)
+            await graphiti.fast_client.build_indices_and_constraints()
+
     return Result(message="Graph cleared", success=True)

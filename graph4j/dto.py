@@ -47,8 +47,8 @@ class AddEpisodesRequest(BaseModel):
     group_id: str = Field(..., description="The group id for the episodes")
     episodes: list[Episode] = Field(..., description="The episodes to add")
     embedding_mode: str = Field(
-        default="default",
-        description='Embedding mode: "fast" (fast only), "dual" (both), or "default" (quality only)',
+        default="dual",
+        description='Embedding mode: "fast" (fast only), "dual" (both), or "quality" (quality only)',
     )
 
 
@@ -59,6 +59,14 @@ class SearchQuery(BaseModel):
     query: str
     max_facts: int = Field(
         default=10, description="The maximum number of facts to retrieve"
+    )
+    center_node_uuid: str | None = Field(
+        None,
+        description="Optional UUID of a node to center the search around for reranking",
+    )
+    embedding_mode: str = Field(
+        default="quality",
+        description='Embedding mode: "fast" (fast DB) or "quality" (quality DB)',
     )
 
 
@@ -90,6 +98,10 @@ class GetMemoryRequest(BaseModel):
     messages: list[Message] = Field(
         ..., description="The messages to build the retrieval query from "
     )
+    embedding_mode: str = Field(
+        default="quality",
+        description='Embedding mode: "fast" (fast DB) or "quality" (quality DB)',
+    )
 
 
 class GetMemoryResponse(BaseModel):
@@ -110,8 +122,8 @@ class NodeSearchRequest(BaseModel):
         description="Optional list of entity type names to filter by (e.g., Preference, Location)",
     )
     embedding_mode: str = Field(
-        default="default",
-        description='Embedding mode: "fast" (fast DB), "dual" (both DBs), or "default" (quality DB)',
+        default="quality",
+        description='Embedding mode: "fast" (fast DB) or "quality" (quality DB)',
     )
 
 
@@ -140,8 +152,8 @@ class FactSearchRequest(BaseModel):
         description="Optional UUID of a node to center the search around for reranking",
     )
     embedding_mode: str = Field(
-        default="default",
-        description='Embedding mode: "fast" (fast DB), "dual" (both DBs), or "default" (quality DB)',
+        default="quality",
+        description='Embedding mode: "fast" (fast DB) or "quality" (quality DB)',
     )
 
 

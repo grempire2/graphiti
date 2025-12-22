@@ -1,0 +1,1235 @@
+﻿uv : 2025-12-21 13:09:51 - asyncio - WARNING - 
+Executing <Task pending name='Task-1' coro=<main() 
+running at D:\Github\graphiti\examples\quickstart\compa
+re_neo4j_servers.py:39> wait_for=<Future pending 
+cb=[Task.task_wakeup()] created at 
+C:\Users\xyz\anaconda3\Lib\asyncio\base_events.py:449> 
+cb=[_run_until_complete_cb() at 
+C:\Users\xyz\anaconda3\Lib\asyncio\base_events.py:182] 
+created at 
+C:\Users\xyz\anaconda3\Lib\asyncio\runners.py:100> 
+took 1.484 seconds
+At line:1 char:321
++ ... meWarning'; uv run python 
+examples/quickstart/compare_neo4j_servers.p ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (2025-12-2 
+   1 13:0...k 1.484 seconds:String) [], RemoteExcepti  
+  on
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX entity_uuid IF NOT EXISTS FOR 
+(e:Entity) ON (e.uuid)` has no effect.} {description: 
+`RANGE INDEX entity_uuid FOR (e:Entity) ON (e.uuid)` 
+already exists.} {position: None} for query: 'CREATE 
+INDEX entity_uuid IF NOT EXISTS FOR (n:Entity) ON 
+(n.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX episode_uuid IF NOT EXISTS FOR 
+(e:Episodic) ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX episode_uuid FOR 
+(e:Episodic) ON (e.uuid)` already exists.} {position: 
+None} for query: 'CREATE INDEX episode_uuid IF NOT 
+EXISTS FOR (n:Episodic) ON (n.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX community_uuid IF NOT EXISTS FOR 
+(e:Community) ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX community_uuid FOR 
+(e:Community) ON (e.uuid)` already exists.} {position: 
+None} for query: 'CREATE INDEX community_uuid IF NOT 
+EXISTS FOR (n:Community) ON (n.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX relation_uuid IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX relation_uuid FOR 
+()-[e:RELATES_TO]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+relation_uuid IF NOT EXISTS FOR ()-[e:RELATES_TO]-() 
+ON (e.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX mention_uuid IF NOT EXISTS FOR 
+()-[e:MENTIONS]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX mention_uuid FOR 
+()-[e:MENTIONS]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX mention_uuid 
+IF NOT EXISTS FOR ()-[e:MENTIONS]-() ON (e.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX has_member_uuid IF NOT EXISTS FOR 
+()-[e:HAS_MEMBER]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX has_member_uuid FOR 
+()-[e:HAS_MEMBER]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+has_member_uuid IF NOT EXISTS FOR ()-[e:HAS_MEMBER]-() 
+ON (e.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX entity_group_id IF NOT EXISTS FOR 
+(e:Entity) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX entity_group_id FOR 
+(e:Entity) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+entity_group_id IF NOT EXISTS FOR (n:Entity) ON 
+(n.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX episode_group_id IF NOT EXISTS FOR 
+(e:Episodic) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX episode_group_id FOR 
+(e:Episodic) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+episode_group_id IF NOT EXISTS FOR (n:Episodic) ON 
+(n.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX community_group_id IF NOT EXISTS 
+FOR (e:Community) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX community_group_id FOR 
+(e:Community) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+community_group_id IF NOT EXISTS FOR (n:Community) ON 
+(n.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX relation_group_id IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.group_id)` has no 
+effect.} {description: `RANGE INDEX relation_group_id 
+FOR ()-[e:RELATES_TO]-() ON (e.group_id)` already 
+exists.} {position: None} for query: 'CREATE INDEX 
+relation_group_id IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX mention_group_id IF NOT EXISTS FOR 
+()-[e:MENTIONS]-() ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX mention_group_id FOR 
+()-[e:MENTIONS]-() ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+mention_group_id IF NOT EXISTS FOR ()-[e:MENTIONS]-() 
+ON (e.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX name_entity_index IF NOT EXISTS 
+FOR (e:Entity) ON (e.name)` has no effect.} 
+{description: `RANGE INDEX name_entity_index FOR 
+(e:Entity) ON (e.name)` already exists.} {position: 
+None} for query: 'CREATE INDEX name_entity_index IF 
+NOT EXISTS FOR (n:Entity) ON (n.name)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_entity_index IF NOT 
+EXISTS FOR (e:Entity) ON (e.created_at)` has no 
+effect.} {description: `RANGE INDEX 
+created_at_entity_index FOR (e:Entity) ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_entity_index IF NOT 
+EXISTS FOR (n:Entity) ON (n.created_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_episodic_index IF NOT 
+EXISTS FOR (e:Episodic) ON (e.created_at)` has no 
+effect.} {description: `RANGE INDEX 
+created_at_episodic_index FOR (e:Episodic) ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_episodic_index IF NOT 
+EXISTS FOR (n:Episodic) ON (n.created_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX valid_at_episodic_index IF NOT 
+EXISTS FOR (e:Episodic) ON (e.valid_at)` has no 
+effect.} {description: `RANGE INDEX 
+valid_at_episodic_index FOR (e:Episodic) ON 
+(e.valid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX valid_at_episodic_index IF NOT 
+EXISTS FOR (n:Episodic) ON (n.valid_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX name_edge_index IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.name)` has no effect.} 
+{description: `RANGE INDEX name_edge_index FOR 
+()-[e:RELATES_TO]-() ON (e.name)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+name_edge_index IF NOT EXISTS FOR ()-[e:RELATES_TO]-() 
+ON (e.name)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.created_at)` has 
+no effect.} {description: `RANGE INDEX 
+created_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.created_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX expired_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.expired_at)` has 
+no effect.} {description: `RANGE INDEX 
+expired_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.expired_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX expired_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.expired_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX valid_at_edge_index IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.valid_at)` has no 
+effect.} {description: `RANGE INDEX 
+valid_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.valid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX valid_at_edge_index IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.valid_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX invalid_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.invalid_at)` has 
+no effect.} {description: `RANGE INDEX 
+invalid_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.invalid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX invalid_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.invalid_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX entity_uuid IF NOT EXISTS FOR 
+(e:Entity) ON (e.uuid)` has no effect.} {description: 
+`RANGE INDEX entity_uuid FOR (e:Entity) ON (e.uuid)` 
+already exists.} {position: None} for query: 'CREATE 
+INDEX entity_uuid IF NOT EXISTS FOR (n:Entity) ON 
+(n.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX episode_uuid IF NOT EXISTS FOR 
+(e:Episodic) ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX episode_uuid FOR 
+(e:Episodic) ON (e.uuid)` already exists.} {position: 
+None} for query: 'CREATE INDEX episode_uuid IF NOT 
+EXISTS FOR (n:Episodic) ON (n.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX community_uuid IF NOT EXISTS FOR 
+(e:Community) ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX community_uuid FOR 
+(e:Community) ON (e.uuid)` already exists.} {position: 
+None} for query: 'CREATE INDEX community_uuid IF NOT 
+EXISTS FOR (n:Community) ON (n.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX relation_uuid IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX relation_uuid FOR 
+()-[e:RELATES_TO]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+relation_uuid IF NOT EXISTS FOR ()-[e:RELATES_TO]-() 
+ON (e.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX mention_uuid IF NOT EXISTS FOR 
+()-[e:MENTIONS]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX mention_uuid FOR 
+()-[e:MENTIONS]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX mention_uuid 
+IF NOT EXISTS FOR ()-[e:MENTIONS]-() ON (e.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX has_member_uuid IF NOT EXISTS FOR 
+()-[e:HAS_MEMBER]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX has_member_uuid FOR 
+()-[e:HAS_MEMBER]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+has_member_uuid IF NOT EXISTS FOR ()-[e:HAS_MEMBER]-() 
+ON (e.uuid)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX relation_group_id IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.group_id)` has no 
+effect.} {description: `RANGE INDEX relation_group_id 
+FOR ()-[e:RELATES_TO]-() ON (e.group_id)` already 
+exists.} {position: None} for query: 'CREATE INDEX 
+relation_group_id IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX community_group_id IF NOT EXISTS 
+FOR (e:Community) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX community_group_id FOR 
+(e:Community) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+community_group_id IF NOT EXISTS FOR (n:Community) ON 
+(n.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX episode_group_id IF NOT EXISTS FOR 
+(e:Episodic) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX episode_group_id FOR 
+(e:Episodic) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+episode_group_id IF NOT EXISTS FOR (n:Episodic) ON 
+(n.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX entity_group_id IF NOT EXISTS FOR 
+(e:Entity) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX entity_group_id FOR 
+(e:Entity) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+entity_group_id IF NOT EXISTS FOR (n:Entity) ON 
+(n.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX mention_group_id IF NOT EXISTS FOR 
+()-[e:MENTIONS]-() ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX mention_group_id FOR 
+()-[e:MENTIONS]-() ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+mention_group_id IF NOT EXISTS FOR ()-[e:MENTIONS]-() 
+ON (e.group_id)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_entity_index IF NOT 
+EXISTS FOR (e:Entity) ON (e.created_at)` has no 
+effect.} {description: `RANGE INDEX 
+created_at_entity_index FOR (e:Entity) ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_entity_index IF NOT 
+EXISTS FOR (n:Entity) ON (n.created_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX valid_at_episodic_index IF NOT 
+EXISTS FOR (e:Episodic) ON (e.valid_at)` has no 
+effect.} {description: `RANGE INDEX 
+valid_at_episodic_index FOR (e:Episodic) ON 
+(e.valid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX valid_at_episodic_index IF NOT 
+EXISTS FOR (n:Episodic) ON (n.valid_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX name_entity_index IF NOT EXISTS 
+FOR (e:Entity) ON (e.name)` has no effect.} 
+{description: `RANGE INDEX name_entity_index FOR 
+(e:Entity) ON (e.name)` already exists.} {position: 
+None} for query: 'CREATE INDEX name_entity_index IF 
+NOT EXISTS FOR (n:Entity) ON (n.name)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_episodic_index IF NOT 
+EXISTS FOR (e:Episodic) ON (e.created_at)` has no 
+effect.} {description: `RANGE INDEX 
+created_at_episodic_index FOR (e:Episodic) ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_episodic_index IF NOT 
+EXISTS FOR (n:Episodic) ON (n.created_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.created_at)` has 
+no effect.} {description: `RANGE INDEX 
+created_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.created_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX name_edge_index IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.name)` has no effect.} 
+{description: `RANGE INDEX name_edge_index FOR 
+()-[e:RELATES_TO]-() ON (e.name)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+name_edge_index IF NOT EXISTS FOR ()-[e:RELATES_TO]-() 
+ON (e.name)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX invalid_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.invalid_at)` has 
+no effect.} {description: `RANGE INDEX 
+invalid_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.invalid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX invalid_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.invalid_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX expired_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.expired_at)` has 
+no effect.} {description: `RANGE INDEX 
+expired_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.expired_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX expired_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.expired_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX valid_at_edge_index IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.valid_at)` has no 
+effect.} {description: `RANGE INDEX 
+valid_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.valid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX valid_at_edge_index IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.valid_at)'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX episode_content IF NOT EXISTS 
+FOR (e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]` has no effect.} 
+{description: `FULLTEXT INDEX episode_content FOR 
+(e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]` already exists.} 
+{position: None} for query: 'CREATE FULLTEXT INDEX 
+episode_content IF NOT EXISTS\n        FOR 
+(e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX node_name_and_summary IF NOT 
+EXISTS FOR (e:Entity) ON EACH [e.name, e.summary, 
+e.group_id]` has no effect.} {description: `FULLTEXT 
+INDEX node_name_and_summary FOR (e:Entity) ON EACH 
+[e.name, e.summary, e.group_id]` already exists.} 
+{position: None} for query: 'CREATE FULLTEXT INDEX 
+node_name_and_summary IF NOT EXISTS\n        FOR 
+(n:Entity) ON EACH [n.name, n.summary, n.group_id]'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX community_name IF NOT EXISTS 
+FOR (e:Community) ON EACH [e.name, e.group_id]` has no 
+effect.} {description: `FULLTEXT INDEX community_name 
+FOR (e:Community) ON EACH [e.name, e.group_id]` 
+already exists.} {position: None} for query: 'CREATE 
+FULLTEXT INDEX community_name IF NOT EXISTS\n        
+FOR (n:Community) ON EACH [n.name, n.group_id]'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX edge_name_and_fact IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON EACH [e.name, 
+e.fact, e.group_id]` has no effect.} {description: 
+`FULLTEXT INDEX edge_name_and_fact FOR 
+()-[e:RELATES_TO]-() ON EACH [e.name, e.fact, 
+e.group_id]` already exists.} {position: None} for 
+query: 'CREATE FULLTEXT INDEX edge_name_and_fact IF 
+NOT EXISTS\n        FOR ()-[e:RELATES_TO]-() ON EACH 
+[e.name, e.fact, e.group_id]'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX episode_content IF NOT EXISTS 
+FOR (e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]` has no effect.} 
+{description: `FULLTEXT INDEX episode_content FOR 
+(e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]` already exists.} 
+{position: None} for query: 'CREATE FULLTEXT INDEX 
+episode_content IF NOT EXISTS\n        FOR 
+(e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX node_name_and_summary IF NOT 
+EXISTS FOR (e:Entity) ON EACH [e.name, e.summary, 
+e.group_id]` has no effect.} {description: `FULLTEXT 
+INDEX node_name_and_summary FOR (e:Entity) ON EACH 
+[e.name, e.summary, e.group_id]` already exists.} 
+{position: None} for query: 'CREATE FULLTEXT INDEX 
+node_name_and_summary IF NOT EXISTS\n        FOR 
+(n:Entity) ON EACH [n.name, n.summary, n.group_id]'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX community_name IF NOT EXISTS 
+FOR (e:Community) ON EACH [e.name, e.group_id]` has no 
+effect.} {description: `FULLTEXT INDEX community_name 
+FOR (e:Community) ON EACH [e.name, e.group_id]` 
+already exists.} {position: None} for query: 'CREATE 
+FULLTEXT INDEX community_name IF NOT EXISTS\n        
+FOR (n:Community) ON EACH [n.name, n.group_id]'
+2025-12-21 13:09:51 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX edge_name_and_fact IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON EACH [e.name, 
+e.fact, e.group_id]` has no effect.} {description: 
+`FULLTEXT INDEX edge_name_and_fact FOR 
+()-[e:RELATES_TO]-() ON EACH [e.name, e.fact, 
+e.group_id]` already exists.} {position: None} for 
+query: 'CREATE FULLTEXT INDEX edge_name_and_fact IF 
+NOT EXISTS\n        FOR ()-[e:RELATES_TO]-() ON EACH 
+[e.name, e.fact, e.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX entity_uuid IF NOT EXISTS FOR 
+(e:Entity) ON (e.uuid)` has no effect.} {description: 
+`RANGE INDEX entity_uuid FOR (e:Entity) ON (e.uuid)` 
+already exists.} {position: None} for query: 'CREATE 
+INDEX entity_uuid IF NOT EXISTS FOR (n:Entity) ON 
+(n.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX episode_uuid IF NOT EXISTS FOR 
+(e:Episodic) ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX episode_uuid FOR 
+(e:Episodic) ON (e.uuid)` already exists.} {position: 
+None} for query: 'CREATE INDEX episode_uuid IF NOT 
+EXISTS FOR (n:Episodic) ON (n.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX community_uuid IF NOT EXISTS FOR 
+(e:Community) ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX community_uuid FOR 
+(e:Community) ON (e.uuid)` already exists.} {position: 
+None} for query: 'CREATE INDEX community_uuid IF NOT 
+EXISTS FOR (n:Community) ON (n.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX relation_uuid IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX relation_uuid FOR 
+()-[e:RELATES_TO]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+relation_uuid IF NOT EXISTS FOR ()-[e:RELATES_TO]-() 
+ON (e.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX mention_uuid IF NOT EXISTS FOR 
+()-[e:MENTIONS]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX mention_uuid FOR 
+()-[e:MENTIONS]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX mention_uuid 
+IF NOT EXISTS FOR ()-[e:MENTIONS]-() ON (e.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX has_member_uuid IF NOT EXISTS FOR 
+()-[e:HAS_MEMBER]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX has_member_uuid FOR 
+()-[e:HAS_MEMBER]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+has_member_uuid IF NOT EXISTS FOR ()-[e:HAS_MEMBER]-() 
+ON (e.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX entity_group_id IF NOT EXISTS FOR 
+(e:Entity) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX entity_group_id FOR 
+(e:Entity) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+entity_group_id IF NOT EXISTS FOR (n:Entity) ON 
+(n.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX episode_group_id IF NOT EXISTS FOR 
+(e:Episodic) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX episode_group_id FOR 
+(e:Episodic) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+episode_group_id IF NOT EXISTS FOR (n:Episodic) ON 
+(n.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX community_group_id IF NOT EXISTS 
+FOR (e:Community) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX community_group_id FOR 
+(e:Community) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+community_group_id IF NOT EXISTS FOR (n:Community) ON 
+(n.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX relation_group_id IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.group_id)` has no 
+effect.} {description: `RANGE INDEX relation_group_id 
+FOR ()-[e:RELATES_TO]-() ON (e.group_id)` already 
+exists.} {position: None} for query: 'CREATE INDEX 
+relation_group_id IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX mention_group_id IF NOT EXISTS FOR 
+()-[e:MENTIONS]-() ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX mention_group_id FOR 
+()-[e:MENTIONS]-() ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+mention_group_id IF NOT EXISTS FOR ()-[e:MENTIONS]-() 
+ON (e.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX name_entity_index IF NOT EXISTS 
+FOR (e:Entity) ON (e.name)` has no effect.} 
+{description: `RANGE INDEX name_entity_index FOR 
+(e:Entity) ON (e.name)` already exists.} {position: 
+None} for query: 'CREATE INDEX name_entity_index IF 
+NOT EXISTS FOR (n:Entity) ON (n.name)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_entity_index IF NOT 
+EXISTS FOR (e:Entity) ON (e.created_at)` has no 
+effect.} {description: `RANGE INDEX 
+created_at_entity_index FOR (e:Entity) ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_entity_index IF NOT 
+EXISTS FOR (n:Entity) ON (n.created_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_episodic_index IF NOT 
+EXISTS FOR (e:Episodic) ON (e.created_at)` has no 
+effect.} {description: `RANGE INDEX 
+created_at_episodic_index FOR (e:Episodic) ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_episodic_index IF NOT 
+EXISTS FOR (n:Episodic) ON (n.created_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX valid_at_episodic_index IF NOT 
+EXISTS FOR (e:Episodic) ON (e.valid_at)` has no 
+effect.} {description: `RANGE INDEX 
+valid_at_episodic_index FOR (e:Episodic) ON 
+(e.valid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX valid_at_episodic_index IF NOT 
+EXISTS FOR (n:Episodic) ON (n.valid_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX name_edge_index IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.name)` has no effect.} 
+{description: `RANGE INDEX name_edge_index FOR 
+()-[e:RELATES_TO]-() ON (e.name)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+name_edge_index IF NOT EXISTS FOR ()-[e:RELATES_TO]-() 
+ON (e.name)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.created_at)` has 
+no effect.} {description: `RANGE INDEX 
+created_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.created_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX expired_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.expired_at)` has 
+no effect.} {description: `RANGE INDEX 
+expired_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.expired_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX expired_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.expired_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX valid_at_edge_index IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.valid_at)` has no 
+effect.} {description: `RANGE INDEX 
+valid_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.valid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX valid_at_edge_index IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.valid_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX invalid_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.invalid_at)` has 
+no effect.} {description: `RANGE INDEX 
+invalid_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.invalid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX invalid_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.invalid_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX episode_content IF NOT EXISTS 
+FOR (e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]` has no effect.} 
+{description: `FULLTEXT INDEX episode_content FOR 
+(e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]` already exists.} 
+{position: None} for query: 'CREATE FULLTEXT INDEX 
+episode_content IF NOT EXISTS\n        FOR 
+(e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX node_name_and_summary IF NOT 
+EXISTS FOR (e:Entity) ON EACH [e.name, e.summary, 
+e.group_id]` has no effect.} {description: `FULLTEXT 
+INDEX node_name_and_summary FOR (e:Entity) ON EACH 
+[e.name, e.summary, e.group_id]` already exists.} 
+{position: None} for query: 'CREATE FULLTEXT INDEX 
+node_name_and_summary IF NOT EXISTS\n        FOR 
+(n:Entity) ON EACH [n.name, n.summary, n.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX community_name IF NOT EXISTS 
+FOR (e:Community) ON EACH [e.name, e.group_id]` has no 
+effect.} {description: `FULLTEXT INDEX community_name 
+FOR (e:Community) ON EACH [e.name, e.group_id]` 
+already exists.} {position: None} for query: 'CREATE 
+FULLTEXT INDEX community_name IF NOT EXISTS\n        
+FOR (n:Community) ON EACH [n.name, n.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX edge_name_and_fact IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON EACH [e.name, 
+e.fact, e.group_id]` has no effect.} {description: 
+`FULLTEXT INDEX edge_name_and_fact FOR 
+()-[e:RELATES_TO]-() ON EACH [e.name, e.fact, 
+e.group_id]` already exists.} {position: None} for 
+query: 'CREATE FULLTEXT INDEX edge_name_and_fact IF 
+NOT EXISTS\n        FOR ()-[e:RELATES_TO]-() ON EACH 
+[e.name, e.fact, e.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX entity_uuid IF NOT EXISTS FOR 
+(e:Entity) ON (e.uuid)` has no effect.} {description: 
+`RANGE INDEX entity_uuid FOR (e:Entity) ON (e.uuid)` 
+already exists.} {position: None} for query: 'CREATE 
+INDEX entity_uuid IF NOT EXISTS FOR (n:Entity) ON 
+(n.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX episode_uuid IF NOT EXISTS FOR 
+(e:Episodic) ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX episode_uuid FOR 
+(e:Episodic) ON (e.uuid)` already exists.} {position: 
+None} for query: 'CREATE INDEX episode_uuid IF NOT 
+EXISTS FOR (n:Episodic) ON (n.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX community_uuid IF NOT EXISTS FOR 
+(e:Community) ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX community_uuid FOR 
+(e:Community) ON (e.uuid)` already exists.} {position: 
+None} for query: 'CREATE INDEX community_uuid IF NOT 
+EXISTS FOR (n:Community) ON (n.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX relation_uuid IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX relation_uuid FOR 
+()-[e:RELATES_TO]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+relation_uuid IF NOT EXISTS FOR ()-[e:RELATES_TO]-() 
+ON (e.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX mention_uuid IF NOT EXISTS FOR 
+()-[e:MENTIONS]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX mention_uuid FOR 
+()-[e:MENTIONS]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX mention_uuid 
+IF NOT EXISTS FOR ()-[e:MENTIONS]-() ON (e.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX has_member_uuid IF NOT EXISTS FOR 
+()-[e:HAS_MEMBER]-() ON (e.uuid)` has no effect.} 
+{description: `RANGE INDEX has_member_uuid FOR 
+()-[e:HAS_MEMBER]-() ON (e.uuid)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+has_member_uuid IF NOT EXISTS FOR ()-[e:HAS_MEMBER]-() 
+ON (e.uuid)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX entity_group_id IF NOT EXISTS FOR 
+(e:Entity) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX entity_group_id FOR 
+(e:Entity) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+entity_group_id IF NOT EXISTS FOR (n:Entity) ON 
+(n.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX episode_group_id IF NOT EXISTS FOR 
+(e:Episodic) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX episode_group_id FOR 
+(e:Episodic) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+episode_group_id IF NOT EXISTS FOR (n:Episodic) ON 
+(n.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX community_group_id IF NOT EXISTS 
+FOR (e:Community) ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX community_group_id FOR 
+(e:Community) ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+community_group_id IF NOT EXISTS FOR (n:Community) ON 
+(n.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX relation_group_id IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.group_id)` has no 
+effect.} {description: `RANGE INDEX relation_group_id 
+FOR ()-[e:RELATES_TO]-() ON (e.group_id)` already 
+exists.} {position: None} for query: 'CREATE INDEX 
+relation_group_id IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX mention_group_id IF NOT EXISTS FOR 
+()-[e:MENTIONS]-() ON (e.group_id)` has no effect.} 
+{description: `RANGE INDEX mention_group_id FOR 
+()-[e:MENTIONS]-() ON (e.group_id)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+mention_group_id IF NOT EXISTS FOR ()-[e:MENTIONS]-() 
+ON (e.group_id)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX name_entity_index IF NOT EXISTS 
+FOR (e:Entity) ON (e.name)` has no effect.} 
+{description: `RANGE INDEX name_entity_index FOR 
+(e:Entity) ON (e.name)` already exists.} {position: 
+None} for query: 'CREATE INDEX name_entity_index IF 
+NOT EXISTS FOR (n:Entity) ON (n.name)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_entity_index IF NOT 
+EXISTS FOR (e:Entity) ON (e.created_at)` has no 
+effect.} {description: `RANGE INDEX 
+created_at_entity_index FOR (e:Entity) ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_entity_index IF NOT 
+EXISTS FOR (n:Entity) ON (n.created_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_episodic_index IF NOT 
+EXISTS FOR (e:Episodic) ON (e.created_at)` has no 
+effect.} {description: `RANGE INDEX 
+created_at_episodic_index FOR (e:Episodic) ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_episodic_index IF NOT 
+EXISTS FOR (n:Episodic) ON (n.created_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX valid_at_episodic_index IF NOT 
+EXISTS FOR (e:Episodic) ON (e.valid_at)` has no 
+effect.} {description: `RANGE INDEX 
+valid_at_episodic_index FOR (e:Episodic) ON 
+(e.valid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX valid_at_episodic_index IF NOT 
+EXISTS FOR (n:Episodic) ON (n.valid_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX name_edge_index IF NOT EXISTS FOR 
+()-[e:RELATES_TO]-() ON (e.name)` has no effect.} 
+{description: `RANGE INDEX name_edge_index FOR 
+()-[e:RELATES_TO]-() ON (e.name)` already exists.} 
+{position: None} for query: 'CREATE INDEX 
+name_edge_index IF NOT EXISTS FOR ()-[e:RELATES_TO]-() 
+ON (e.name)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX created_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.created_at)` has 
+no effect.} {description: `RANGE INDEX 
+created_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.created_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX created_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.created_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX expired_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.expired_at)` has 
+no effect.} {description: `RANGE INDEX 
+expired_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.expired_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX expired_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.expired_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX valid_at_edge_index IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.valid_at)` has no 
+effect.} {description: `RANGE INDEX 
+valid_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.valid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX valid_at_edge_index IF NOT EXISTS 
+FOR ()-[e:RELATES_TO]-() ON (e.valid_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE RANGE INDEX invalid_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.invalid_at)` has 
+no effect.} {description: `RANGE INDEX 
+invalid_at_edge_index FOR ()-[e:RELATES_TO]-() ON 
+(e.invalid_at)` already exists.} {position: None} for 
+query: 'CREATE INDEX invalid_at_edge_index IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON (e.invalid_at)'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX episode_content IF NOT EXISTS 
+FOR (e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]` has no effect.} 
+{description: `FULLTEXT INDEX episode_content FOR 
+(e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]` already exists.} 
+{position: None} for query: 'CREATE FULLTEXT INDEX 
+episode_content IF NOT EXISTS\n        FOR 
+(e:Episodic) ON EACH [e.content, e.source, 
+e.source_description, e.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX node_name_and_summary IF NOT 
+EXISTS FOR (e:Entity) ON EACH [e.name, e.summary, 
+e.group_id]` has no effect.} {description: `FULLTEXT 
+INDEX node_name_and_summary FOR (e:Entity) ON EACH 
+[e.name, e.summary, e.group_id]` already exists.} 
+{position: None} for query: 'CREATE FULLTEXT INDEX 
+node_name_and_summary IF NOT EXISTS\n        FOR 
+(n:Entity) ON EACH [n.name, n.summary, n.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX community_name IF NOT EXISTS 
+FOR (e:Community) ON EACH [e.name, e.group_id]` has no 
+effect.} {description: `FULLTEXT INDEX community_name 
+FOR (e:Community) ON EACH [e.name, e.group_id]` 
+already exists.} {position: None} for query: 'CREATE 
+FULLTEXT INDEX community_name IF NOT EXISTS\n        
+FOR (n:Community) ON EACH [n.name, n.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - INFO - 
+Received notification from DBMS server: {severity: 
+INFORMATION} {code: Neo.ClientNotification.Schema.Index
+OrConstraintAlreadyExists} {category: SCHEMA} {title: 
+`CREATE FULLTEXT INDEX edge_name_and_fact IF NOT 
+EXISTS FOR ()-[e:RELATES_TO]-() ON EACH [e.name, 
+e.fact, e.group_id]` has no effect.} {description: 
+`FULLTEXT INDEX edge_name_and_fact FOR 
+()-[e:RELATES_TO]-() ON EACH [e.name, e.fact, 
+e.group_id]` already exists.} {position: None} for 
+query: 'CREATE FULLTEXT INDEX edge_name_and_fact IF 
+NOT EXISTS\n        FOR ()-[e:RELATES_TO]-() ON EACH 
+[e.name, e.fact, e.group_id]'
+2025-12-21 13:09:52 - neo4j.notifications - WARNING - 
+Received notification from DBMS server: {severity: 
+WARNING} {code: Neo.ClientNotification.Statement.Unknow
+nPropertyKeyWarning} {category: UNRECOGNIZED} {title: 
+The provided property key is not in the database} 
+{description: One of the property names in your query 
+is not available in the database, make sure you didn't 
+misspell it or that the label is available when you 
+run this statement in your application (the missing 
+property name is: entity_edges)} {position: line: 17, 
+column: 7, offset: 473} for query: '\n                 
+                   MATCH (e:Episodic)\n                
+                    WHERE e.valid_at <= 
+$reference_time\n                                    
+\nAND e.group_id IN $group_ids\nAND e.source = 
+$source\n        RETURN\n        \n    e.uuid AS 
+uuid,\n    e.name AS name,\n    e.group_id AS 
+group_id,\n    e.created_at AS created_at,\n    
+e.source AS source,\n    e.source_description AS 
+source_description,\n    e.content AS content,\n    
+e.valid_at AS valid_at,\n    e.entity_edges AS 
+entity_edges\n\n        ORDER BY e.valid_at DESC\n     
+   LIMIT $num_episodes\n        '
+2025-12-21 13:09:52 - asyncio - WARNING - Executing 
+<Task pending name='Task-1' coro=<main() running at D:\
+Github\graphiti\examples\quickstart\compare_neo4j_serve
+rs.py:58> wait_for=<Future pending 
+cb=[_chain_future.<locals>._call_check_cancel() at 
+C:\Users\xyz\anaconda3\Lib\asyncio\futures.py:391, 
+Task.task_wakeup()] created at 
+C:\Users\xyz\anaconda3\Lib\asyncio\base_events.py:449> 
+cb=[_run_until_complete_cb() at 
+C:\Users\xyz\anaconda3\Lib\asyncio\base_events.py:182] 
+created at 
+C:\Users\xyz\anaconda3\Lib\asyncio\runners.py:100> 
+took 0.235 seconds
+2025-12-21 13:09:52 - httpx - INFO - HTTP Request: 
+POST http://localhost:11435/v1/responses "HTTP/1.1 404 
+Not Found"
+2025-12-21 13:09:52 - 
+graphiti_core.llm_client.openai_base_client - ERROR - 
+Error in generating LLM response: Error code: 404 - 
+{'error': {'message': "model 'gpt-4o-mini' not found", 
+'type': 'api_error', 'param': None, 'code': None}}
+2025-12-21 13:09:52 - 
+graphiti_core.llm_client.openai_base_client - WARNING 
+- Retrying after application error (attempt 1/2): 
+Error code: 404 - {'error': {'message': "model 
+'gpt-4o-mini' not found", 'type': 'api_error', 
+'param': None, 'code': None}}
+2025-12-21 13:09:52 - httpx - INFO - HTTP Request: 
+POST http://localhost:11435/v1/responses "HTTP/1.1 404 
+Not Found"
+2025-12-21 13:09:52 - 
+graphiti_core.llm_client.openai_base_client - ERROR - 
+Error in generating LLM response: Error code: 404 - 
+{'error': {'message': "model 'gpt-4o-mini' not found", 
+'type': 'api_error', 'param': None, 'code': None}}
+2025-12-21 13:09:52 - 
+graphiti_core.llm_client.openai_base_client - WARNING 
+- Retrying after application error (attempt 2/2): 
+Error code: 404 - {'error': {'message': "model 
+'gpt-4o-mini' not found", 'type': 'api_error', 
+'param': None, 'code': None}}
+2025-12-21 13:09:52 - httpx - INFO - HTTP Request: 
+POST http://localhost:11435/v1/responses "HTTP/1.1 404 
+Not Found"
+2025-12-21 13:09:52 - 
+graphiti_core.llm_client.openai_base_client - ERROR - 
+Error in generating LLM response: Error code: 404 - 
+{'error': {'message': "model 'gpt-4o-mini' not found", 
+'type': 'api_error', 'param': None, 'code': None}}
+2025-12-21 13:09:52 - 
+graphiti_core.llm_client.openai_base_client - ERROR - 
+Max retries (2) exceeded. Last error: Error code: 404 
+- {'error': {'message': "model 'gpt-4o-mini' not 
+found", 'type': 'api_error', 'param': None, 'code': 
+None}}
+Connecting to Default Neo4j at bolt://localhost:7687...
+Connecting to Fast Neo4j at bolt://localhost:7787...
+Initializing databases...
+Building indices and constraints...
+
+Adding test episode to both databases...
+Adding to Default...
+
+Connections closed.
+Traceback (most recent call last):
+  File "D:\Github\graphiti\examples\quickstart\compare_
+neo4j_servers.py", line 111, in <module>
+    asyncio.run(main())
+  File 
+"C:\Users\xyz\anaconda3\Lib\asyncio\runners.py", line 
+194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File 
+"C:\Users\xyz\anaconda3\Lib\asyncio\runners.py", line 
+118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File 
+"C:\Users\xyz\anaconda3\Lib\asyncio\base_events.py", 
+line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "D:\Github\graphiti\examples\quickstart\compare_
+neo4j_servers.py", line 58, in main
+    await default_graphiti.add_episode(
+  File "D:\Github\graphiti\graphiti_core\graphiti.py", 
+line 846, in add_episode
+    raise e
+  File "D:\Github\graphiti\graphiti_core\graphiti.py", 
+line 753, in add_episode
+    extracted_nodes = await extract_nodes(
+                      ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\graphiti\graphiti_core\utils\maintena
+nce\node_operations.py", line 141, in extract_nodes
+    llm_response = await llm_client.generate_response(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\graphiti\graphiti_core\llm_client\ope
+nai_base_client.py", line 216, in generate_response
+    response = await self._generate_response(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\graphiti\graphiti_core\llm_client\ope
+nai_base_client.py", line 145, in _generate_response
+    response = await 
+self._create_structured_completion(
+               
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\graphiti\graphiti_core\llm_client\ope
+nai_client.py", line 81, in 
+_create_structured_completion
+    response = await self.client.responses.parse(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\graphiti\.venv\Lib\site-packages\open
+ai\resources\responses\responses.py", line 2264, in 
+parse
+    return await self._post(
+           ^^^^^^^^^^^^^^^^^
+  File "D:\Github\graphiti\.venv\Lib\site-packages\open
+ai\_base_client.py", line 1784, in post
+    return await self.request(cast_to, opts, 
+stream=stream, stream_cls=stream_cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github\graphiti\.venv\Lib\site-packages\open
+ai\_base_client.py", line 1584, in request
+    raise 
+self._make_status_error_from_response(err.response) 
+from None
+openai.NotFoundError: Error code: 404 - {'error': 
+{'message': "model 'gpt-4o-mini' not found", 'type': 
+'api_error', 'param': None, 'code': None}}

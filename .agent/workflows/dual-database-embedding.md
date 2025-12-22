@@ -40,8 +40,7 @@ User Request → LLM Extraction (once) → Dual Save
 ```
 Search Request → Check embedding_mode
                  ├─→ "fast": Search Fast DB with fast embedder
-                 ├─→ "default": Search Quality DB with quality embedder
-                 └─→ "dual": Search both DBs and merge results
+                 └─→ "quality": Search Quality DB with quality embedder
 ```
 
 ## Implementation Changes
@@ -59,7 +58,7 @@ Create two separate Graphiti clients:
 ### 3. Dual Embedding Implementation (`dual_embedding_graphiti.py`)
 Refactor to implement dual database strategy:
 - `add_episode_dual()`: Save to both databases
-- `search_dual()`: Search appropriate database based on mode
+- `search()`: Search appropriate database based on mode
 
 ### 4. Router Updates
 - **Ingest Router**: Use dual database save for "dual" mode
