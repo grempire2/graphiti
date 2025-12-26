@@ -1,0 +1,106 @@
+name: ts-n8n-graph4j
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    hostname: assistant-black
+    environment:
+      - TS_AUTHKEY=tskey-auth-kFLEVkvmiw11CNTRL-c5Nf4janynM2crSoSctJoMKCWAABAmtTA # auth key, not client key
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - C:/Users/xyz/Documents/docker/tailscale:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    ports:
+      - "5678:5678" # Expose n8n's port to the host
+      - "7474:7474" # Neo4j HTTP
+      - "7687:7687" # Neo4j Bolt
+      - "7575:7575" # Neo4j Fast HTTP
+      - "7787:7787" # Neo4j Fast Bolt
+      - "8001:8001" # graph4j API
+    restart: always
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    network_mode: service:tailscale
+    volumes:
+      - C:/Users/xyz/Documents/docker/n8n:/home/node/.n8n
+      - C:/Users/xyz/OneDrive:/onedrive # Map OneDrive folder
+      # - ./export-workflow.json:/home/node/export-workflow.json # Mount workflow file by the command below (optional)
+    environment:
+      - N8N_SECURE_COOKIE=false
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true # Recommanded for security
+      - NODE_FUNCTION_ALLOW_EXTERNAL=uuid # Allow external modules in Function node
+      # - NODE_OPTIONS=--max-old-space-size=8192
+    restart: always
+
+  graph4j:
+    build:
+      context: C:/Users/xyz/Documents/GitHub/graphiti
+      dockerfile: graph4j/Dockerfile
+    network_mode: service:tailscale
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      neo4j-fast:
+        condition: service_healthy
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-ollama}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-http://host.docker.internal:11435/v1}
+      - MODEL_NAME=${MODEL_NAME}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text:latest}
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=${NEO4J_USER:-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
+      # Fast Embedder Configuration (optional, defaults to main embedder if not set)
+      - FAST_BASE_URL=${FAST_BASE_URL:-http://host.docker.internal:11434/v1}
+      - FAST_EMBEDDING_MODEL=${FAST_EMBEDDING_MODEL:-nomic-embed-text:latest}
+      # Fast Database Configuration (optional)
+      # If not set, defaults to bolt://localhost:7787 (derived from NEO4J_URI)
+      - NEO4J_FAST_URI=${NEO4J_FAST_URI:-bolt://neo4j-fast:7687}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: always
+
+  neo4j:
+    image: neo4j:latest
+    network_mode: service:tailscale
+    volumes:
+      - neo4j_data:/data
+    environment:
+      - NEO4J_AUTH=${NEO4J_AUTH}
+      - NEO4J_server_jvm_additional=--add-modules jdk.incubator.vector
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 10
+      start_period: 3s
+    restart: always
+
+  neo4j-fast:
+    image: neo4j:latest
+    network_mode: service:tailscale
+    volumes:
+      - neo4j_fast_data:/data
+    environment:
+      - NEO4J_AUTH=${NEO4J_AUTH}
+      - NEO4J_server_jvm_additional=--add-modules jdk.incubator.vector
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 10
+      start_period: 3s
+    restart: always
+
+volumes:
+  neo4j_data:
+  neo4j_fast_data:
