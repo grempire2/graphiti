@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 
+from graphiti_core.search.search_filters import SearchFilters
+
 from pydantic import BaseModel, Field
 
 
@@ -63,6 +65,9 @@ class SearchQuery(BaseModel):
     center_node_uuid: str | None = Field(
         None,
         description="Optional UUID of a node to center the search around for reranking",
+    )
+    filters: SearchFilters | None = Field(
+        None, description="Optional structured filters (labels, properties, temporal)"
     )
     embedding_mode: str = Field(
         default="quality",

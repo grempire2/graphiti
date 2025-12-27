@@ -42,10 +42,37 @@ pip install -e ".[dev]"
 
 ## API Endpoints
 
-- `/search` - Main search endpoint with hybrid search capabilities
-- `/search/facts` - Fact-based hybrid search
-- `/ingest/episodes` - Add episodes to the knowledge graph
+- `/search` - Main search endpoint with hybrid search and structural filters
+- `/episodes` - Add episodes to the knowledge graph
 - `/health` - Health check endpoint
+
+## Precise Search & Structural Data
+
+For advanced use cases (like numeric comparisons or strict entity type filtering), it is recommended to **preprocess your data before sending it to Graph4j**.
+
+While Graphiti provides built-in semantic search, structural filters ensure 100% precision for mathematical or categorical queries.
+
+### Using Filters
+
+You can pass a `filters` object to the `/search` endpoint to apply hard constraints:
+
+```json
+{
+  "query": "Who is older than 25?",
+  "filters": {
+    "property_filters": [
+      {
+        "property_name": "age",
+        "property_value": 25,
+        "comparison_operator": ">"
+      }
+    ]
+  }
+}
+```
+
+*Note: For property filters to work, the corresponding data (e.g., "age") must have been ingested with a structured schema or consistent property names.*
+
 
 ## Configuration
 

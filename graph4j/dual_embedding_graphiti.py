@@ -1,10 +1,11 @@
 import asyncio
 import logging
-from typing import Any
+from datetime import datetime
 
 from graphiti_core import Graphiti
-from graphiti_core.nodes import EntityNode, EpisodicNode, EpisodeType
-from datetime import datetime
+from graphiti_core.nodes import EpisodeType  # EntityNode, EpisodicNode
+from graphiti_core.search.search_filters import SearchFilters
+
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +80,7 @@ async def search(
     group_ids: list[str],
     num_results: int = 10,
     center_node_uuid: str | None = None,
+    filters: SearchFilters | None = None,
     embedding_mode: str = "quality",
 ):
     """
@@ -91,11 +93,15 @@ async def search(
         group_ids: List of group IDs to filter results
         num_results: Maximum number of results to return
         center_node_uuid: Optional center node for graph-distance reranking
+        filters: Optional structured filters (labels, properties, etc.)
         embedding_mode: Which database to search ("fast" or "quality")
 
     Returns:
         Search results from the appropriate database(s)
     """
+    # Default to empty filters if None
+    search_filters = filters or SearchFilters()
+
     if embedding_mode == "fast":
         # Search only fast database
         logger.debug(f"Searching fast database for: {query}")
@@ -104,6 +110,7 @@ async def search(
             query=query,
             num_results=num_results,
             center_node_uuid=center_node_uuid,
+            search_filter=search_filters,
         )
 
     elif embedding_mode == "quality":
@@ -114,6 +121,7 @@ async def search(
             query=query,
             num_results=num_results,
             center_node_uuid=center_node_uuid,
+            search_filter=search_filters,
         )
 
     else:

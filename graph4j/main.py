@@ -11,9 +11,9 @@ Unlike the basic server, Graph4j implements:
 - No MCP Overhead: Direct FastAPI endpoints without MCP protocol
 
 Key Features:
-- POST /search/nodes - Advanced node search with hybrid search and RRF
-- POST /search/facts - Advanced fact search with optional center node reranking
-- Entity type filtering (Preference, Location, Requirement, etc.)
+- POST /search - Main fact search with hybrid search and structural filters
+- POST /episodes - Ingest conversation history or episodes
+- Entity type filtering via structural filters
 - Graph-distance-based reranking for contextual relevance
 """
 
@@ -57,15 +57,17 @@ app = FastAPI(
     - **Fact Search**: Search relationships with center node reranking
     - **No MCP Overhead**: Direct REST API without MCP protocol complexity
     
-    ## Advanced Search Endpoints
+    ## Search Endpoints
     
-    - `POST /search/nodes` - Search nodes with hybrid search and entity type filtering
-    - `POST /search/facts` - Search facts with optional center node reranking
+    - `POST /search` - Main fact search with hybrid search and optional structural filters
+    
+    ## Ingestion Endpoints
+    
+    - `POST /episodes` - Add episodes to the knowledge graph
     
     ## Legacy Endpoints
     
     - `POST /search` - Basic search (for backward compatibility)
-    - `POST /messages` - Add conversation messages
     - `POST /entity-node` - Add entity nodes
     - `DELETE /entity-edge/{uuid}` - Delete edges
     - `DELETE /episode/{uuid}` - Delete episodes

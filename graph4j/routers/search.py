@@ -68,6 +68,7 @@ async def search(query: SearchQuery, graphiti: GraphitiDep):
         query=query.query,
         num_results=query.max_facts,
         center_node_uuid=query.center_node_uuid,
+        filters=query.filters,
         embedding_mode=query.embedding_mode,
     )
     facts = [get_fact_result_from_edge(edge) for edge in relevant_edges]
