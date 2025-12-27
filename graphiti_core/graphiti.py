@@ -35,6 +35,7 @@ from graphiti_core.edges import (
     create_entity_edge_embeddings,
 )
 from graphiti_core.embedder import EmbedderClient, OpenAIEmbedder
+from graphiti_core.errors import NodeNotFoundError
 from graphiti_core.graphiti_types import GraphitiClients
 from graphiti_core.helpers import (
     get_default_group_id,
@@ -388,6 +389,7 @@ class Graphiti:
         edge_types: dict[str, type[BaseModel]] | None,
         nodes: list[EntityNode],
         uuid_map: dict[str, str],
+        custom_extraction_instructions: str | None = None,
     ) -> tuple[list[EntityEdge], list[EntityEdge]]:
         """Extract edges from episode and resolve against existing graph."""
         extracted_edges = await extract_edges(
@@ -398,6 +400,7 @@ class Graphiti:
             edge_type_map,
             group_id,
             edge_types,
+            custom_extraction_instructions,
         )
 
         edges = resolve_edge_pointers(extracted_edges, uuid_map)
@@ -637,6 +640,7 @@ class Graphiti:
         previous_episode_uuids: list[str] | None = None,
         edge_types: dict[str, type[BaseModel]] | None = None,
         edge_type_map: dict[tuple[str, str], list[str]] | None = None,
+        custom_extraction_instructions: str | None = None,
     ) -> AddEpisodeResults:
         """
         Process an episode and update the graph.
@@ -671,6 +675,9 @@ class Graphiti:
         previous_episode_uuids : list[str] | None
             Optional.  list of episode uuids to use as the previous episodes. If this is not provided,
             the most recent episodes by created_at date will be used.
+        custom_extraction_instructions : str | None
+            Optional. Custom extraction instructions string to be included in the extract entities and extract edges prompts.
+            This allows for additional instructions or context to guide the extraction process.
 
         Returns
         -------
@@ -756,6 +763,7 @@ class Graphiti:
                     previous_episodes,
                     entity_types,
                     excluded_entity_types,
+                    custom_extraction_instructions,
                 )
 
                 nodes, uuid_map, _ = await resolve_extracted_nodes(
@@ -767,17 +775,16 @@ class Graphiti:
                 )
 
                 # Extract and resolve edges in parallel with attribute extraction
-                resolved_edges, invalidated_edges = (
-                    await self._extract_and_resolve_edges(
-                        episode,
-                        extracted_nodes,
-                        previous_episodes,
-                        edge_type_map or edge_type_map_default,
-                        group_id,
-                        edge_types,
-                        nodes,
-                        uuid_map,
-                    )
+                resolved_edges, invalidated_edges = await self._extract_and_resolve_edges(
+                    episode,
+                    extracted_nodes,
+                    previous_episodes,
+                    edge_type_map or edge_type_map_default,
+                    group_id,
+                    edge_types,
+                    nodes,
+                    uuid_map,
+                    custom_extraction_instructions,
                 )
 
                 # Extract node attributes
@@ -1300,12 +1307,53 @@ class Graphiti:
         if edge.fact_embedding is None:
             await edge.generate_embedding(self.embedder)
 
-        nodes, uuid_map, _ = await resolve_extracted_nodes(
-            self.clients,
-            [source_node, target_node],
-        )
+        if source_node.uuid is not None:
+            try:
+                resolved_source = await EntityNode.get_by_uuid(self.driver, source_node.uuid)
+            except NodeNotFoundError:
+                raise ValueError(f'Node with UUID {source_node.uuid} not found') from None
+        else:
+            resolved_source_nodes, _, _ = await resolve_extracted_nodes(
+                self.clients,
+                [source_node],
+            )
+            resolved_source = resolved_source_nodes[0]
 
-        updated_edge = resolve_edge_pointers([edge], uuid_map)[0]
+        if target_node.uuid is not None:
+            try:
+                resolved_target = await EntityNode.get_by_uuid(self.driver, target_node.uuid)
+            except NodeNotFoundError:
+                raise ValueError(f'Node with UUID {target_node.uuid} not found') from None
+        else:
+            resolved_target_nodes, _, _ = await resolve_extracted_nodes(
+                self.clients,
+                [target_node],
+            )
+            resolved_target = resolved_target_nodes[0]
+
+        nodes = [resolved_source, resolved_target]
+
+        # Merge user-provided properties from original nodes into resolved nodes (excluding uuid)
+        # Update attributes dictionary (merge rather than replace)
+        if source_node.attributes:
+            resolved_source.attributes.update(source_node.attributes)
+        if target_node.attributes:
+            resolved_target.attributes.update(target_node.attributes)
+
+        # Update summary if provided by user (non-empty string)
+        if source_node.summary:
+            resolved_source.summary = source_node.summary
+        if target_node.summary:
+            resolved_target.summary = target_node.summary
+
+        # Update labels (merge with existing)
+        if source_node.labels:
+            resolved_source.labels = list(set(resolved_source.labels) | set(source_node.labels))
+        if target_node.labels:
+            resolved_target.labels = list(set(resolved_target.labels) | set(target_node.labels))
+
+        edge.source_node_uuid = resolved_source.uuid
+        edge.target_node_uuid = resolved_target.uuid
 
         valid_edges = await EntityEdge.get_between_nodes(
             self.driver, edge.source_node_uuid, edge.target_node_uuid
@@ -1314,8 +1362,8 @@ class Graphiti:
         related_edges = (
             await search(
                 self.clients,
-                updated_edge.fact,
-                group_ids=[updated_edge.group_id],
+                edge.fact,
+                group_ids=[edge.group_id],
                 config=EDGE_HYBRID_SEARCH_RRF,
                 search_filter=SearchFilters(
                     edge_uuids=[edge.uuid for edge in valid_edges]
@@ -1325,8 +1373,8 @@ class Graphiti:
         existing_edges = (
             await search(
                 self.clients,
-                updated_edge.fact,
-                group_ids=[updated_edge.group_id],
+                edge.fact,
+                group_ids=[edge.group_id],
                 config=EDGE_HYBRID_SEARCH_RRF,
                 search_filter=SearchFilters(),
             )
@@ -1334,7 +1382,7 @@ class Graphiti:
 
         resolved_edge, invalidated_edges, _ = await resolve_extracted_edge(
             self.llm_client,
-            updated_edge,
+            edge,
             related_edges,
             existing_edges,
             EpisodicNode(
