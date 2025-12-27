@@ -1,10 +1,48 @@
+name: ts-n8n-graph4j
 services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    hostname: assistant-black
+    environment:
+      - TS_AUTHKEY= # auth key, not client key
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - C:/Users/xyz/Documents/docker/tailscale:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    ports:
+      - "5678:5678" # Expose n8n's port to the host
+      - "7474:7474" # Neo4j HTTP
+      - "7687:7687" # Neo4j Bolt
+      - "7575:7575" # Neo4j Fast HTTP
+      - "7787:7787" # Neo4j Fast Bolt
+      - "8001:8001" # graph4j API
+    restart: always
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    network_mode: service:tailscale
+    volumes:
+      - C:/Users/xyz/Documents/docker/n8n:/home/node/.n8n
+      - C:/Users/xyz/OneDrive:/onedrive # Map OneDrive folder
+      # - ./export-workflow.json:/home/node/export-workflow.json # Mount workflow file by the command below (optional)
+    environment:
+      - N8N_SECURE_COOKIE=false
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true # Recommanded for security
+      - NODE_FUNCTION_ALLOW_EXTERNAL=uuid # Allow external modules in Function node
+      # - NODE_OPTIONS=--max-old-space-size=8192
+    restart: always
+
   graph4j:
     build:
-      context: ..
+      context: C:/Users/xyz/Documents/GitHub/graphiti
       dockerfile: graph4j/Dockerfile
-    ports:
-      - "8001:8001"
+    network_mode: service:tailscale
     depends_on:
       neo4j:
         condition: service_healthy
@@ -29,12 +67,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    restart: always
 
   neo4j:
     image: neo4j:latest
-    ports:
-      - "7474:7474"  # HTTP
-      - "7687:7687"  # Bolt
+    network_mode: service:tailscale
     volumes:
       - neo4j_data:/data
     environment:
@@ -46,12 +83,11 @@ services:
       timeout: 10s
       retries: 10
       start_period: 3s
+    restart: always
 
   neo4j-fast:
     image: neo4j:latest
-    ports:
-      - "7575:7474"  # HTTP (host:container)
-      - "7787:7687"  # Bolt (host:container)
+    network_mode: service:tailscale
     volumes:
       - neo4j_fast_data:/data
     environment:
@@ -63,6 +99,7 @@ services:
       timeout: 10s
       retries: 10
       start_period: 3s
+    restart: always
 
 volumes:
   neo4j_data:
