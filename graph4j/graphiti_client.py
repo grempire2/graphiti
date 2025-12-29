@@ -194,7 +194,7 @@ async def initialize_graphiti(settings: SettingsDep):
         f"Initialized Graphiti clients ({'DUAL DATABASE' if is_dual_db else 'SINGLE DATABASE'} mode):\n"
         f"  Fast: {settings.fast_embedding_model} @ {settings.fast_base_url}\n"
         f"    Database: {settings.neo4j_fast_uri}\n"
-        f"  Default: {settings.embedding_model} @ {settings.openai_base_url}\n"
+        f"  Default: {settings.embedding_model} @ {settings.embedding_base_url}\n"
         f"    Database: {settings.neo4j_uri}"
     )
 
