@@ -146,7 +146,7 @@ async def initialize_graphiti(settings: SettingsDep):
         )
     )
     logger.info(
-        f"LLM client initialized. Model: {llm_client.model}, Small model: {llm_client.small_model}"
+        f"LLM client initialized. Model: {llm_client.model}, Small model: {llm_client.small_model} @ {settings.openai_base_url}"
     )
 
     # Create both embedders
@@ -162,7 +162,7 @@ async def initialize_graphiti(settings: SettingsDep):
         config=OpenAIEmbedderConfig(
             embedding_model=settings.embedding_model,
             api_key=settings.openai_api_key,
-            base_url=settings.openai_base_url,
+            base_url=settings.embedding_base_url,
         )
     )
 

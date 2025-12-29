@@ -9,14 +9,18 @@ class Settings(BaseSettings):
     openai_api_key: str
     openai_base_url: str | None = None
     model_name: str | None = None
+
+    # Dedicated URL for quality embedding (optional, fallbacks to openai_base_url if not set)
+    embedding_base_url: str | None = None
     embedding_model: str | None = None
+
+    # Fast embedder configuration (optional, defaults to embedding_base_url if not set)
+    fast_base_url: str | None = None
+    fast_embedding_model: str | None = None
+
     neo4j_uri: str
     neo4j_user: str
     neo4j_password: str
-
-    # Fast embedder configuration (optional, defaults to main embedder if not set)
-    fast_base_url: str | None = None
-    fast_embedding_model: str | None = None
 
     # Fast database configuration (optional)
     neo4j_fast_uri: str | None = None
@@ -24,15 +28,17 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     def model_post_init(self, __context) -> None:
-        """Set defaults for fast embedder and fast database if not explicitly configured.
+        """Set defaults for embedding URLs, fast embedder and fast database if not explicitly configured.
 
-        This ensures both embedders always have valid configurations.
-        The fast embedder defaults to the main embedder settings if not specified.
+        This ensures all services have valid configurations even if only sparse settings are provided.
         """
-        # Fast embedding defaults to main configuration if not set
-        # This allows the system to work even without explicit fast config
+        # Set defaults for embedding URL if not explicitly set
+        if not self.embedding_base_url:
+            self.embedding_base_url = self.openai_base_url
+
+        # Fast embedding defaults to main embedding configuration if not set
         if not self.fast_base_url:
-            self.fast_base_url = self.openai_base_url
+            self.fast_base_url = self.embedding_base_url
         if not self.fast_embedding_model:
             self.fast_embedding_model = self.embedding_model
 

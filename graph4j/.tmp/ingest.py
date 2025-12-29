@@ -1,24 +1,22 @@
 import httpx
 import json
-import time
 import asyncio
-from datetime import datetime, timezone
 
 BASE_URL = "http://localhost:18888"
 
 
-async def test_graph4j():
+async def ingest():
     async with httpx.AsyncClient(timeout=30.0) as client:
         # 1. Clear existing data
-        print("Cleaning up existing data...")
-        try:
-            response = await client.post(f"{BASE_URL}/clear")
-            print(f"Clear status: {response.status_code}, {response.json()}")
-        except Exception as e:
-            print(f"Failed to clear data (is server running?): {e}")
-            return
+        # print("Cleaning up existing data...")
+        # try:
+        #     response = await client.post(f"{BASE_URL}/clear")
+        #     print(f"Clear status: {response.status_code}, {response.json()}")
+        # except Exception as e:
+        #     print(f"Failed to clear data (is server running?): {e}")
+        #     return
 
-        # 2. Prepare episodes from quickstart_neo4j.py
+        # 2. Prepare episodes
         episodes = [
             {
                 "name": "Kamala Harris Info 1",
@@ -73,41 +71,6 @@ async def test_graph4j():
         print(f"Ingest status: {response.status_code}")
         print(f"Response: {response.json()}")
 
-        # 4. Wait for processing (since it's an async worker)
-        print("\nWaiting for processing (10 seconds)...")
-        await asyncio.sleep(10)
-
-        # 5. Search for the facts
-        search_queries = [
-            "Who was the California Attorney General?",
-            "Who is the Governor of California?",
-        ]
-
-        for query in search_queries:
-            print(f"\nSearching for: '{query}'")
-            search_request = {
-                "query": query,
-                "group_ids": ["test_group"],
-                "max_facts": 5,
-                "embedding_mode": "quality",
-            }
-
-            response = await client.post(f"{BASE_URL}/search", json=search_request)
-
-            if response.status_code == 200:
-                results = response.json()
-                print("Search Results:")
-                facts = results.get("facts", [])
-                if not facts:
-                    print("No facts found.")
-                for fact in facts:
-                    print(f"- Fact: {fact['fact']}")
-                    print(f"  UUID: {fact['uuid']}")
-            else:
-                print(
-                    f"Search failed with status {response.status_code}: {response.text}"
-                )
-
 
 if __name__ == "__main__":
-    asyncio.run(test_graph4j())
+    asyncio.run(ingest())
