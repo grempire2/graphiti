@@ -73,6 +73,12 @@ class SearchQuery(BaseModel):
         default="quality",
         description='Embedding mode: "fast" (fast DB) or "quality" (quality DB)',
     )
+    reranker_min_score: float | None = Field(
+        0.45, description="Minimum score for reranking filters"
+    )
+    min_sim_score: float | None = Field(
+        None, description="Minimum similarity score for vector search"
+    )
 
 
 class FactResult(BaseModel):
@@ -95,7 +101,7 @@ class SearchResults(BaseModel):
 class GetMemoryRequest(BaseModel):
     group_id: str = Field(..., description="The group id of the memory to get")
     max_facts: int = Field(
-        default=10, description="The maximum number of facts to retrieve"
+        default=3, description="The maximum number of facts to retrieve"
     )
     center_node_uuid: str | None = Field(
         None, description="The uuid of the node to center the retrieval on"
@@ -106,6 +112,12 @@ class GetMemoryRequest(BaseModel):
     embedding_mode: str = Field(
         default="quality",
         description='Embedding mode: "fast" (fast DB) or "quality" (quality DB)',
+    )
+    reranker_min_score: float | None = Field(
+        0.45, description="Minimum score for reranking filters"
+    )
+    min_sim_score: float | None = Field(
+        None, description="Minimum similarity score for vector search"
     )
 
 
@@ -129,6 +141,12 @@ class NodeSearchRequest(BaseModel):
     embedding_mode: str = Field(
         default="quality",
         description='Embedding mode: "fast" (fast DB) or "quality" (quality DB)',
+    )
+    reranker_min_score: float | None = Field(
+        0.45, description="Minimum score for reranking filters"
+    )
+    min_sim_score: float | None = Field(
+        None, description="Minimum similarity score for vector search"
     )
 
 
@@ -159,6 +177,12 @@ class FactSearchRequest(BaseModel):
     embedding_mode: str = Field(
         default="quality",
         description='Embedding mode: "fast" (fast DB) or "quality" (quality DB)',
+    )
+    reranker_min_score: float | None = Field(
+        0.45, description="Minimum score for reranking filters"
+    )
+    min_sim_score: float | None = Field(
+        None, description="Minimum similarity score for vector search"
     )
 
 

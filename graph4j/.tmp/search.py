@@ -6,7 +6,7 @@ BASE_URL = "http://localhost:18888"
 
 
 async def search():
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    async with httpx.AsyncClient(timeout=10.0) as client:
         # Search for the facts
         search_queries = [
             "Who was the California Attorney General?",
@@ -20,7 +20,7 @@ async def search():
                 "query": query,
                 "group_ids": ["test_group"],
                 "max_facts": 3,
-                # "embedding_mode": "quality",  # default
+                # "embedding_mode": "fast",  # default quality
             }
 
             response = await client.post(f"{BASE_URL}/search", json=search_request)
@@ -33,7 +33,7 @@ async def search():
                     print("No facts found.")
                 for fact in facts:
                     print(f"- Fact: {fact['fact']}")
-                    print(f"  UUID: {fact['uuid']}")
+                    # print(f"  UUID: {fact['uuid']}")
             else:
                 print(
                     f"Search failed with status {response.status_code}: {response.text}"

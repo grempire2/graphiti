@@ -7,6 +7,13 @@ from graphiti_core.nodes import EpisodeType  # EntityNode, EpisodicNode
 from graphiti_core.search.search_filters import SearchFilters
 
 
+from graphiti_core.search.search_config import SearchConfig
+from graphiti_core.search.search_config_recipes import (
+    EDGE_HYBRID_SEARCH_RRF,
+    EDGE_HYBRID_SEARCH_NODE_DISTANCE,
+)
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -78,10 +85,12 @@ async def search(
     default_client: Graphiti,
     query: str,
     group_ids: list[str],
-    num_results: int = 10,
+    num_results: int = 3,
     center_node_uuid: str | None = None,
     filters: SearchFilters | None = None,
     embedding_mode: str = "quality",
+    reranker_min_score: float | None = None,
+    min_sim_score: float | None = None,
 ):
     """
     Search across databases based on embedding mode.
@@ -95,6 +104,8 @@ async def search(
         center_node_uuid: Optional center node for graph-distance reranking
         filters: Optional structured filters (labels, properties, etc.)
         embedding_mode: Which database to search ("fast" or "quality")
+        reranker_min_score: Optional minimum score for reranking
+        min_sim_score: Optional minimum similarity score for vector search
 
     Returns:
         Search results from the appropriate database(s)
@@ -102,41 +113,58 @@ async def search(
     # Default to empty filters if None
     search_filters = filters or SearchFilters()
 
+    # Configure search based on whether a center node is provided
+    # Use model_copy to avoid modifying the recipe constants
+    search_config: SearchConfig = (
+        EDGE_HYBRID_SEARCH_RRF
+        if center_node_uuid is None
+        else EDGE_HYBRID_SEARCH_NODE_DISTANCE
+    ).model_copy(deep=True)
+
+    search_config.limit = num_results
+    if reranker_min_score is not None:
+        search_config.reranker_min_score = reranker_min_score
+
+    if min_sim_score is not None and search_config.edge_config is not None:
+        search_config.edge_config.sim_min_score = min_sim_score
+
     if embedding_mode == "fast":
         # Search only fast database
         logger.debug(f"Searching fast database for: {query}")
-        return await fast_client.search(
+        results = await fast_client.search_(
             group_ids=group_ids,
             query=query,
-            num_results=num_results,
+            config=search_config,
             center_node_uuid=center_node_uuid,
             search_filter=search_filters,
         )
+        return results.edges
 
     elif embedding_mode == "quality":
         # Search only quality database
         logger.debug(f"Searching quality database for: {query}")
-        return await default_client.search(
+        results = await default_client.search_(
             group_ids=group_ids,
             query=query,
-            num_results=num_results,
+            config=search_config,
             center_node_uuid=center_node_uuid,
             search_filter=search_filters,
         )
+        return results.edges
 
     else:
         raise ValueError(f"Invalid embedding_mode: {embedding_mode}")
 
 
-def is_dual_database_mode(fast_client: Graphiti, default_client: Graphiti) -> bool:
-    """
-    Check if the system is running in dual database mode.
+# def is_dual_database_mode(fast_client: Graphiti, default_client: Graphiti) -> bool:
+#     """
+#     Check if the system is running in dual database mode.
 
-    Args:
-        fast_client: Graphiti client connected to fast database
-        default_client: Graphiti client connected to default database
+#     Args:
+#         fast_client: Graphiti client connected to fast database
+#         default_client: Graphiti client connected to default database
 
-    Returns:
-        True if using separate databases, False if using same database
-    """
-    return fast_client.driver.uri != default_client.driver.uri
+#     Returns:
+#         True if using separate databases, False if using same database
+#     """
+#     return fast_client.driver.uri != default_client.driver.uri

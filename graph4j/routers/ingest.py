@@ -91,8 +91,8 @@ async def add_episodes(
 
         # Format episode body based on type
         if ep_type == EpisodeType.message:
-            # For messages, format with role information
-            episode_body = f'{ep.role or ""}({ep.role_type or ""}): {ep.content}'
+            # For messages, use a cleaner format: "Role: Content"
+            episode_body = f"{ep.role}: {ep.content}"
         else:
             # For text and json, use content as-is
             episode_body = ep.content

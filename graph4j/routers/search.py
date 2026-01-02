@@ -70,6 +70,8 @@ async def search(query: SearchQuery, graphiti: GraphitiDep):
         center_node_uuid=query.center_node_uuid,
         filters=query.filters,
         embedding_mode=query.embedding_mode,
+        reranker_min_score=query.reranker_min_score,
+        min_sim_score=query.min_sim_score,
     )
     facts = [get_fact_result_from_edge(edge) for edge in relevant_edges]
     return SearchResults(
@@ -93,36 +95,34 @@ async def get_episodes(group_id: str, last_n: int, graphiti: GraphitiDep):
     return episodes
 
 
-@router.post("/get-memory", status_code=status.HTTP_200_OK)
-async def get_memory(
-    request: GetMemoryRequest,
-    graphiti: GraphitiDep,
-):
-    """
-    Get memory facts based on a conversation history.
+# @router.post("/get-memory", status_code=status.HTTP_200_OK)
+# async def get_memory(
+#     request: GetMemoryRequest,
+#     graphiti: GraphitiDep,
+# ):
+#     """
+#     Get memory facts based on a conversation history.
 
-    This endpoint composes a query from multiple messages and searches
-    for relevant facts in the knowledge graph.
-    """
-    combined_query = compose_query_from_messages(request.messages)
-    result = await search_helper(
-        fast_client=graphiti.fast_client,
-        default_client=graphiti,
-        group_ids=[request.group_id],
-        query=combined_query,
-        num_results=request.max_facts,
-        center_node_uuid=request.center_node_uuid,
-        embedding_mode=request.embedding_mode,
-    )
-    facts = [get_fact_result_from_edge(edge) for edge in result]
-    return GetMemoryResponse(facts=facts)
+#     This endpoint composes a query from multiple messages and searches
+#     for relevant facts in the knowledge graph.
+#     """
+#     combined_query = compose_query_from_messages(request.messages)
+#     result = await search_helper(
+#         fast_client=graphiti.fast_client,
+#         default_client=graphiti,
+#         group_ids=[request.group_id],
+#         query=combined_query,
+#         num_results=request.max_facts,
+#         center_node_uuid=request.center_node_uuid,
+#         embedding_mode=request.embedding_mode,
+#         reranker_min_score=request.reranker_min_score,
+#         min_sim_score=request.min_sim_score,
+#     )
+#     facts = [get_fact_result_from_edge(edge) for edge in result]
+#     return GetMemoryResponse(facts=facts)
 
 
-def compose_query_from_messages(messages: list[Message]):
-    """Compose a search query from a list of messages."""
-    combined_query = ""
-    for message in messages:
-        combined_query += (
-            f'{message.role_type or ""}({message.role or ""}): {message.content}\n'
-        )
-    return combined_query
+# def compose_query_from_messages(messages: list[Message]):
+#     """Compose a search query from a list of messages."""
+#     # Only use the content of the messages to maintain a clean search signal
+#     return "\n".join([m.content for m in messages if m.content])
