@@ -130,7 +130,7 @@ async def search(
 
     if embedding_mode == "fast":
         # Search only fast database
-        logger.debug(f"Searching fast database for: {query}")
+        # logger.debug(f"Searching fast database for: {query}")
         results = await fast_client.search_(
             group_ids=group_ids,
             query=query,
@@ -138,11 +138,19 @@ async def search(
             center_node_uuid=center_node_uuid,
             search_filter=search_filters,
         )
+
+        # Simple print for docker console debugging
+        # print(f"\n--- FAST SEARCH: {query} ---")
+        # for i, (edge, score) in enumerate(
+        #     zip(results.edges, results.edge_reranker_scores)
+        # ):
+        #     print(f"[{i}] Score: {score:.4f} | Fact: {edge.fact[:120]}...")
+
         return results.edges
 
     elif embedding_mode == "quality":
         # Search only quality database
-        logger.debug(f"Searching quality database for: {query}")
+        # logger.debug(f"Searching quality database for: {query}")
         results = await default_client.search_(
             group_ids=group_ids,
             query=query,
@@ -150,6 +158,14 @@ async def search(
             center_node_uuid=center_node_uuid,
             search_filter=search_filters,
         )
+
+        # Simple print for docker console debugging
+        # print(f"\n--- QUALITY SEARCH: {query} ---")
+        # for i, (edge, score) in enumerate(
+        #     zip(results.edges, results.edge_reranker_scores)
+        # ):
+        #     print(f"[{i}] Score: {score:.4f} | Fact: {edge.fact[:120]}...")
+
         return results.edges
 
     else:
