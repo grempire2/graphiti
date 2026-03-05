@@ -37,6 +37,14 @@ services:
       - NODE_FUNCTION_ALLOW_EXTERNAL=uuid # Allow external modules in Function node
       - NODES_EXCLUDE="[]"
       # - NODE_OPTIONS=--max-old-space-size=8192
+      # Privacy: Disable n8n server connections
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=false
+      - N8N_TEMPLATES_ENABLED=false
+      # Unset diagnostic hooks/config
+      - EXTERNAL_FRONTEND_HOOKS_URLS=
+      - N8N_DIAGNOSTICS_CONFIG_FRONTEND=
+      - N8N_DIAGNOSTICS_CONFIG_BACKEND=
     restart: always
 
   graph4j:
@@ -52,9 +60,9 @@ services:
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY:-ollama}
       - OPENAI_BASE_URL=${OPENAI_BASE_URL:-http://host.docker.internal:11434/v1}
-      - MODEL_NAME=${MODEL_NAME:-qwen3:30b}
+      - MODEL_NAME=${MODEL_NAME:-glm-4.7-flash:latest} # qwen3:30b
       - EMBEDDING_BASE_URL=${EMBEDDING_BASE_URL:-http://host.docker.internal:11434/v1}
-      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-qwen3-embedding:latest}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-qwen3-embedding:8b-q8_0}
       - NEO4J_URI=bolt://localhost:7687
       - NEO4J_USER=${NEO4J_USER:-neo4j}
       - NEO4J_PASSWORD=${NEO4J_PASSWORD:-password}
@@ -64,6 +72,8 @@ services:
       # Fast Database Configuration (optional)
       # If not set, defaults to bolt://localhost:7787 (derived from NEO4J_URI)
       - NEO4J_FAST_URI=${NEO4J_FAST_URI:-bolt://localhost:7787}
+      # No concurrency limit — all resources are local
+      - SEMAPHORE_LIMIT=10000
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
       interval: 10s
