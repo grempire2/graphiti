@@ -9,30 +9,29 @@ This module implements search features including:
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 
 from dto import (
-    GetMemoryRequest,
-    GetMemoryResponse,
-    Message,
     SearchQuery,
     SearchResults,
 )
 from graphiti_client import (
-    get_fact_result_from_edge,
     GraphitiDep,
+    ensure_operation_ready,
     get_entity_edge as get_entity_edge_helper,
+    get_fact_result_from_edge,
 )
 from dual_embedding_graphiti import (
     search as search_helper,
 )
+from config import SettingsDep
 
 router = APIRouter()
 
 
 # Primary search endpoint
 @router.post("/search", status_code=status.HTTP_200_OK)
-async def search(query: SearchQuery, graphiti: GraphitiDep):
+async def search(query: SearchQuery, graphiti: GraphitiDep, settings: SettingsDep):
     """
     Primary fact search endpoint using hybrid search.
 
@@ -61,6 +60,18 @@ async def search(query: SearchQuery, graphiti: GraphitiDep):
             "embedding_mode": "quality"
         }
     """
+    if query.embedding_mode not in {"fast", "quality"}:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported embedding_mode '{query.embedding_mode}' for search",
+        )
+
+    await ensure_operation_ready(
+        settings,
+        operation="search",
+        embedding_mode=query.embedding_mode,
+    )
+
     relevant_edges = await search_helper(
         fast_client=graphiti.fast_client,
         default_client=graphiti,

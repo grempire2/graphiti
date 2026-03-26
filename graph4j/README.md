@@ -44,7 +44,15 @@ pip install -e ".[dev]"
 
 - `/search` - Main search endpoint with hybrid search and structural filters
 - `/episodes` - Add episodes to the knowledge graph
-- `/health` - Health check endpoint
+- `/health` - Liveness-only health check endpoint
+- `/ready` - Operational readiness for Neo4j plus inference/embedder backends
+
+## Runtime URLs
+
+- Graph4j host URL: `http://localhost:18888`
+- Graph4j backend inference/embedder URL: `http://100.76.6.21:11434/v1`
+
+Use `/ready` when you need to confirm Graph4j can actually perform search and ingestion. `/health` only confirms that the FastAPI service is up.
 
 ## Precise Search & Structural Data
 

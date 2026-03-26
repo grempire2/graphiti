@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from functools import partial
 
 from fastapi import APIRouter, status
@@ -12,8 +13,11 @@ from graphiti_client import (
     delete_entity_edge as delete_entity_edge_helper,
     delete_group as delete_group_helper,
     delete_episodic_node as delete_episodic_node_helper,
+    ensure_operation_ready,
     get_clients,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class AsyncWorker:
@@ -24,19 +28,22 @@ class AsyncWorker:
     async def worker(self):
         while True:
             try:
-                print(f"Got a job: (size of remaining queue: {self.queue.qsize()})")
                 job = await self.queue.get()
                 try:
+                    logger.info(
+                        "Graph4j worker accepted job (remaining_queue=%s)",
+                        self.queue.qsize(),
+                    )
                     await job()
                 except Exception as e:
-                    print(f"[WORKER ERROR] Job failed with exception: {e}")
-                    import traceback
-
-                    traceback.print_exc()
+                    logger.exception("Graph4j worker job failed: %s", e)
+                finally:
+                    self.queue.task_done()
             except asyncio.CancelledError:
                 break
 
     async def start(self):
+        logger.info("Starting Graph4j async ingest worker")
         self.task = asyncio.create_task(self.worker())
 
     async def stop(self):
@@ -45,6 +52,7 @@ class AsyncWorker:
             await self.task
         while not self.queue.empty():
             self.queue.get_nowait()
+        logger.info("Stopped Graph4j async ingest worker")
 
 
 async_worker = AsyncWorker()
@@ -72,12 +80,21 @@ async def add_episodes(
     - 'fast': Uses only fast embeddings for quick processing
     - 'quality': Uses only quality/default embeddings
     """
+    await ensure_operation_ready(
+        settings,
+        operation="ingest",
+        embedding_mode=request.embedding_mode,
+    )
 
     async def add_episode_task(ep: Episode):
         # Get initialized clients from graphiti_client
         default_graphiti, fast_graphiti = get_clients()
 
-        print(f"[WORKER] Starting episode task: {ep.name}")
+        logger.info(
+            "Graph4j worker starting episode task name=%s mode=%s",
+            ep.name,
+            request.embedding_mode,
+        )
 
         # Determine the episode type
         episode_type_map = {
@@ -138,7 +155,7 @@ async def add_episodes(
                 source_description=ep.source_description,
             )
 
-        print(f"[WORKER] Completed episode task: {ep.name}")
+        logger.info("Graph4j worker completed episode task name=%s", ep.name)
 
     for ep in request.episodes:
         await async_worker.queue.put(partial(add_episode_task, ep))
