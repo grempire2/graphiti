@@ -423,6 +423,7 @@ async def initialize_graphiti(settings: Settings) -> None:
     fast_embedder = OpenAIEmbedder(
         config=OpenAIEmbedderConfig(
             embedding_model=settings.fast_embedding_model,
+            embedding_dim=settings.embedding_dim,
             api_key=settings.openai_api_key,
             base_url=settings.fast_base_url,
         ),
@@ -432,6 +433,7 @@ async def initialize_graphiti(settings: Settings) -> None:
     embedder = OpenAIEmbedder(
         config=OpenAIEmbedderConfig(
             embedding_model=settings.embedding_model,
+            embedding_dim=settings.embedding_dim,
             api_key=settings.openai_api_key,
             base_url=settings.embedding_base_url,
         ),

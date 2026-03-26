@@ -107,7 +107,8 @@ async def search(
             else await embedder.create(input_data=[query.replace('\n', ' ')])
         )
     else:
-        search_vector = [0.0] * EMBEDDING_DIM
+        embedding_dim = getattr(getattr(embedder, 'config', None), 'embedding_dim', EMBEDDING_DIM)
+        search_vector = [0.0] * embedding_dim
 
     # if group_ids is empty, set it to None
     group_ids = group_ids if group_ids and group_ids != [''] else None

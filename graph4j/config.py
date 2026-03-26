@@ -4,21 +4,24 @@ from typing import Annotated
 from fastapi import Depends
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+DEFAULT_EMBEDDING_DIM = 4096
+
 
 class Settings(BaseSettings):
     openai_api_key: str
     openai_base_url: str | None = None
-    model_name: str | None = None
+    model_name: str
     backend_timeout_seconds: float = 5.0
     readiness_ttl_seconds: float = 5.0
 
     # Dedicated URL for quality embedding (optional, fallbacks to openai_base_url if not set)
     embedding_base_url: str | None = None
-    embedding_model: str | None = None
+    embedding_model: str
 
     # Fast embedder configuration (optional, defaults to embedding_base_url if not set)
     fast_base_url: str | None = None
     fast_embedding_model: str | None = None
+    embedding_dim: int = DEFAULT_EMBEDDING_DIM
 
     neo4j_uri: str
     neo4j_user: str
